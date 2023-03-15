@@ -109,13 +109,13 @@ export default function Sidebar(props: {
     const { ref, width } = useElementSize();
 
     const burgerLabel = sidebarOpen
-        ? intl.formatMessage({ defaultMessage: "Close sidebar" })
-        : intl.formatMessage({ defaultMessage: "Open sidebar" });
+        ? intl.formatMessage({ defaultMessage: "Cerrar barra lateral" })
+        : intl.formatMessage({ defaultMessage: "Abrir barra lateral" });
 
     const elem = useMemo(() => (
         <Container className={"sidebar " + (sidebarOpen ? 'opened' : 'closed')} ref={ref}>
             <div className="sidebar-header">
-                <h2>Chat History</h2>
+                <h2>Historial de chats</h2>
                 <Burger opened={sidebarOpen} onClick={onBurgerClick} aria-label={burgerLabel} transitionDuration={0} />
             </div>
             <div className="sidebar-content">
@@ -141,7 +141,7 @@ export default function Sidebar(props: {
                         <Menu.Item onClick={() => {
                             dispatch(setTab('user'));
                         }} icon={<i className="fas fa-gear" />}>
-                            User settings
+                            Ajustes de usuario
                         </Menu.Item>
                         {/*
                         <Menu.Divider />

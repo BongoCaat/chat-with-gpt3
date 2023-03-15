@@ -70,7 +70,7 @@ export class ChatManager extends EventEmitter {
         const chat = this.chats.get(message.chatID);
 
         if (!chat) {
-            throw new Error('Chat not found');
+            throw new Error('Chat no encontrado');
         }
 
         const newMessage: Message = {
@@ -102,7 +102,7 @@ export class ChatManager extends EventEmitter {
         const chat = this.chats.get(message.chatID);
 
         if (!chat) {
-            throw new Error('Chat not found');
+            throw new Error('Chat no encontrado');
         }
 
         const messages: Message[] = message.parentID
@@ -117,7 +117,7 @@ export class ChatManager extends EventEmitter {
         const chat = this.chats.get(latestMessage.chatID);
 
         if (!chat) {
-            throw new Error('Chat not found');
+            throw new Error('Chat no encontrado');
         }
 
         const reply: Message = {
@@ -149,7 +149,7 @@ export class ChatManager extends EventEmitter {
             }
             clearInterval(timer);
             cancel();
-            reply.content += "\n\nI'm sorry, I'm having trouble connecting to OpenAI. Please make sure you've entered your OpenAI API key correctly and try again.";
+            reply.content += "\n\nLo siento, tengo problemas para conectarme a OpenAI. Asegúrese de haber ingresado su clave API de OpenAI correctamente e intente nuevamente.";
             reply.content = reply.content.trim();
             reply.done = true;
             this.activeReplies.delete(reply.id);
@@ -241,7 +241,7 @@ export class ChatManager extends EventEmitter {
                 channel.postMessage({ type: 'chat-update', data: serializeChat(chat!) });
             }
         } else {
-            console.log('failed to find reply');
+            console.log('no se pudo encontrar la respuesta');
         }
     }
 

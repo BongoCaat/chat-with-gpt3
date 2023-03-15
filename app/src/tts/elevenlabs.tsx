@@ -127,7 +127,7 @@ export default class ElevenLabsReader extends EventEmitter {
         }
 
         this.cancelled = true;
-        this.emit('error', new Error('Timed out waiting for audio'));
+        this.emit('error', new Error('Se agotó el tiempo de espera del audio'));
     }
 
     public async play(element: HTMLElement, voiceID: string = defaultElevenLabsVoiceID, apiKey = this.apiKey) {
@@ -188,7 +188,7 @@ export default class ElevenLabsReader extends EventEmitter {
             };
             this.currentSource.start();
         } catch (e) {
-            console.error('failed to play', e);
+            console.error('no pudo jugar', e);
             this.emit('done');
         }
     }
@@ -275,7 +275,7 @@ export function ElevenLabsReaderButton(props: { selector: string }) {
                 <FormattedMessage defaultMessage="Play" />
             </span>}
             {status === 'buffering' && <span>
-                <FormattedMessage defaultMessage="Loading audio..." />
+                <FormattedMessage defaultMessage="Cargando audio..." />
             </span>}
             {status !== 'idle' && status !== 'buffering' && <span>
                 <FormattedMessage defaultMessage="Stop" />

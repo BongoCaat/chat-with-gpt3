@@ -142,8 +142,8 @@ export default function Header(props: HeaderProps) {
     const onBurgerClick = useCallback(() => dispatch(toggleSidebar()), [dispatch]);
 
     const burgerLabel = sidebarOpen
-        ? intl.formatMessage({ defaultMessage: "Close sidebar" })
-        : intl.formatMessage({ defaultMessage: "Open sidebar" });
+        ? intl.formatMessage({ defaultMessage: "Cerrar barra lateral" })
+        : intl.formatMessage({ defaultMessage: "Abrir barra lateral" });
 
     const onNewChat = useCallback(async () => {
         setLoading(true);
@@ -160,11 +160,11 @@ export default function Header(props: HeaderProps) {
             <Helmet>
                 <title>
                     {props.title ? `${props.title} - ` : ''}
-                    {intl.formatMessage({ defaultMessage: "Chat with GPT - Unofficial ChatGPT app" })}
+                    {intl.formatMessage({ defaultMessage: "ChatGPT | BongoCaat#5645" })}
                 </title>
             </Helmet>
             {!sidebarOpen && <Burger opened={sidebarOpen} onClick={onBurgerClick} aria-label={burgerLabel} transitionDuration={0} />}
-            {context.isHome && <h2>{intl.formatMessage({ defaultMessage: "Chat with GPT" })}</h2>}
+            {context.isHome && <h2>{intl.formatMessage({ defaultMessage: "ChatGPT | Bongo" })}</h2>}
             <div className="spacer" />
             <HeaderButton icon="search" onClick={spotlight.openSpotlight} />
             <HeaderButton icon="gear" onClick={openSettings} />
@@ -179,14 +179,14 @@ export default function Header(props: HeaderProps) {
                         dispatch(openLoginModal());
                     }
                 }}>
-                    <FormattedMessage defaultMessage="Sign in <h>to sync</h>"
+                    <FormattedMessage defaultMessage="Iniciar sesión <h>para sincronizar</h>"
                         values={{
                             h: (chunks: any) => <span className="hide-on-mobile">{chunks}</span>
                         }} />
                 </HeaderButton>
             )}
             <HeaderButton icon="plus" onClick={onNewChat} loading={loading} variant="light">
-                <FormattedMessage defaultMessage="New Chat" />
+                <FormattedMessage defaultMessage="Nuevo chat" />
             </HeaderButton>
         </HeaderContainer>
     ), [sidebarOpen, onBurgerClick, props.title, props.share, props.canShare, props.onShare, openSettings, onNewChat, loading, context.authenticated, context.isHome, context.isShare, spotlight.openSpotlight]);

@@ -45,7 +45,7 @@ function parseResponseChunk(buffer: any): OpenAIResponseChunk {
 
 export async function createChatCompletion(messages: OpenAIMessage[], parameters: Parameters): Promise<string> {
     if (!parameters.apiKey) {
-        throw new Error('No API key provided');
+        throw new Error('No se proporcionó ninguna clave de API');
     }
 
     const configuration = new Configuration({
@@ -65,7 +65,7 @@ export async function createChatCompletion(messages: OpenAIMessage[], parameters
 
 export async function createStreamingChatCompletion(messages: OpenAIMessage[], parameters: Parameters) {
     if (!parameters.apiKey) {
-        throw new Error('No API key provided');
+        throw new Error('No se proporcionó ninguna clave de API');
     }
 
     const emitter = new EventEmitter();

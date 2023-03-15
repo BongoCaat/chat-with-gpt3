@@ -42,24 +42,24 @@ export function LoginModal(props: any) {
     return <Modal opened={modal === 'login'} onClose={onClose} withCloseButton={false}>
         <Container action="/chatapi/login" method="post">
             <h2>
-                Sign in
+                Iniciar sesión
             </h2>
             <input type="hidden" name="redirect_url" value={window.location.href} />
             <TextInput label="Email address"
                 name="username"
-                placeholder="Enter your email address"
+                placeholder="Ingrese su dirección de correo electrónico"
                 type="email"
                 required />
             <PasswordInput label="Password"
                 name="password"
-                placeholder="Enter your password"
+                placeholder="Ingresa tu contraseña"
                 maxLength={500}
                 required />
             <Button fullWidth type="submit">
-                Sign in
+                Iniciar sesión
             </Button>
             <Button fullWidth variant="subtle" onClick={onCreateAccountClick}>
-                Or create an account
+                O crea una cuenta
             </Button>
         </Container>
     </Modal>
@@ -75,25 +75,25 @@ export function CreateAccountModal(props: any) {
     return <Modal opened={modal === 'signup'} onClose={onClose} withCloseButton={false}>
         <Container action="/chatapi/register" method="post">
             <h2>
-                Create an account
+                Crea una cuenta
             </h2>
             <input type="hidden" name="redirect_url" value={window.location.href} />
             <TextInput label="Email address"
                 name="username"
-                placeholder="Enter your email address"
+                placeholder="Ingrese su dirección de correo electrónico"
                 type="email"
                 required />
             <PasswordInput label="Password"
                 name="password"
-                placeholder="Enter your password"
+                placeholder="Ingresa tu contraseña"
                 minLength={6}
                 maxLength={500}
                 required />
             <Button fullWidth type="submit">
-                Sign up
+                Registrarse
             </Button>
             <Button fullWidth variant="subtle" onClick={onSignInClick}>
-                Or sign in to an existing account
+                O inicie sesión en una cuenta existente
             </Button>
         </Container>
     </Modal>

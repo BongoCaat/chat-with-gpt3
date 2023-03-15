@@ -56,7 +56,7 @@ const root = ReactDOM.createRoot(
 async function loadLocaleData(locale: string) {
     const messages = await fetch(`/lang/${locale}.json`);
     if (!messages.ok) {
-        throw new Error("Failed to load locale data");
+        throw new Error("No se pudieron cargar los datos de configuración regional");
     }
     return messages.json()
 }
@@ -68,7 +68,7 @@ async function bootstrapApplication() {
     try {
         messages = await loadLocaleData(locale.toLocaleLowerCase());
     } catch (e) {
-        console.warn("No locale data for", locale);
+        console.warn("No hay datos de configuración regional para", locale);
     }
 
     root.render(

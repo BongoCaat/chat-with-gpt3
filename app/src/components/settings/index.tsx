@@ -92,9 +92,9 @@ export default function SettingsDrawer(props: SettingsDrawerProps) {
             <Container>
                 <Tabs value={tab} onTabChange={onTabChange} style={{ margin: '0rem' }}>
                     <Tabs.List grow={small}>
-                        <Tabs.Tab value="options">Options</Tabs.Tab>
-                        <Tabs.Tab value="user">User</Tabs.Tab>
-                        <Tabs.Tab value="speech">Speech</Tabs.Tab>
+                        <Tabs.Tab value="options">Opciones</Tabs.Tab>
+                        <Tabs.Tab value="user">Usuario</Tabs.Tab>
+                        <Tabs.Tab value="speech">Voz</Tabs.Tab>
                     </Tabs.List>
                     <UserOptionsTab />
                     <GenerationOptionsTab />
@@ -102,7 +102,7 @@ export default function SettingsDrawer(props: SettingsDrawerProps) {
                 </Tabs>
                 <div id="save">
                     <Button variant="light" fullWidth size="md" onClick={close}>
-                        Save and Close
+                        Guardar y cerrar
                     </Button>
                 </div>
             </Container>

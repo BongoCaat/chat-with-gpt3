@@ -1,1 +1,1 @@
-export const APP_NAME = "Chat with GPT";
+export const APP_NAME = "ChatGPT | BongoCaat#5645";

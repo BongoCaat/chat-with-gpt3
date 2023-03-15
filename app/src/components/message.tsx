@@ -208,13 +208,13 @@ export default function MessageComponent(props: { message: Message, last: boolea
         switch (role) {
             case 'user':
                 if (share) {
-                    return intl.formatMessage({ id: 'role-user-formal', defaultMessage: 'User' });
+                    return intl.formatMessage({ id: 'role-user-formal', defaultMessage: 'Usuario' });
                 } else {
-                    return intl.formatMessage({ id: 'role-user', defaultMessage: 'You' });
+                    return intl.formatMessage({ id: 'role-user', defaultMessage: 'Yo' });
                 }
                 break;
             case 'assistant':
-                return intl.formatMessage({ id: 'role-chatgpt', defaultMessage: 'ChatGPT' });
+                return intl.formatMessage({ id: 'role-chatgpt', defaultMessage: 'ChatGPT 🤖' });
             case 'system':
                 return intl.formatMessage({ id: 'role-system', defaultMessage: 'System' });
             default:
@@ -243,7 +243,7 @@ export default function MessageComponent(props: { message: Message, last: boolea
                             {({ copy, copied }) => (
                                 <Button variant="subtle" size="sm" compact onClick={copy} style={{ marginLeft: '1rem' }}>
                                     <i className="fa fa-clipboard" />
-                                    <span>{copied ? <FormattedMessage defaultMessage="Copied" /> : <FormattedMessage defaultMessage="Copy" />}</span>
+                                    <span>{copied ? <FormattedMessage defaultMessage="Copiado" /> : <FormattedMessage defaultMessage="Copiar" />}</span>
                                 </Button>
                             )}
                         </CopyButton>
@@ -251,7 +251,7 @@ export default function MessageComponent(props: { message: Message, last: boolea
                             <Button variant="subtle" size="sm" compact onClick={() => share(props.message.content)}>
                                 <i className="fa fa-share" />
                                 <span>
-                                    <FormattedMessage defaultMessage="Share" />
+                                    <FormattedMessage defaultMessage="Compartir" />
                                 </span>
                             </Button>
                         )}
@@ -261,14 +261,14 @@ export default function MessageComponent(props: { message: Message, last: boolea
                                 setEditing(v => !v);
                             }}>
                                 <i className="fa fa-edit" />
-                                <span>{editing ? <FormattedMessage defaultMessage="Cancel" /> : <FormattedMessage defaultMessage="Edit" />}</span>
+                                <span>{editing ? <FormattedMessage defaultMessage="Cancelar" /> : <FormattedMessage defaultMessage="Editar" />}</span>
                             </Button>
                         )}
                         {!context.isShare && props.message.role === 'assistant' && (
                             <Button variant="subtle" size="sm" compact onClick={() => context.regenerateMessage(props.message)}>
                                 <i className="fa fa-refresh" />
                                 <span>
-                                    <FormattedMessage defaultMessage="Regenerate" />
+                                    <FormattedMessage defaultMessage="Regenerar" />
                                 </span>
                             </Button>
                         )}
@@ -279,10 +279,10 @@ export default function MessageComponent(props: { message: Message, last: boolea
                             onChange={e => setContent(e.currentTarget.value)}
                             autosize={true} />
                         <Button variant="light" onClick={() => context.editMessage(props.message, content)}>
-                            <FormattedMessage defaultMessage="Save changes" />
+                            <FormattedMessage defaultMessage="Guardar cambios" />
                         </Button>
                         <Button variant="subtle" onClick={() => setEditing(false)}>
-                            <FormattedMessage defaultMessage="Cancel" />
+                            <FormattedMessage defaultMessage="Cancelar" />
                         </Button>
                     </Editor>)}
                 </div>

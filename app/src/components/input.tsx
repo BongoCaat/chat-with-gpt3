@@ -79,7 +79,7 @@ export default function MessageInput(props: MessageInputProps) {
                     <Button variant="subtle" size="xs" compact onClick={() => {
                         context.chat.cancelReply(context.currentChat.leaf!.id);
                     }}>
-                        <FormattedMessage defaultMessage={"Cancel"} />
+                        <FormattedMessage defaultMessage={"Cancelar"} />
                     </Button>
                     <Loader size="xs" style={{ padding: '0 0.8rem 0 0.5rem' }} />
                 </>)}
@@ -106,7 +106,7 @@ export default function MessageInput(props: MessageInputProps) {
                 autosize
                 minRows={(hasVerticalSpace || context.isHome) ? 3 : 2}
                 maxRows={12}
-                placeholder={intl.formatMessage({ defaultMessage: "Enter a message here..." })}
+                placeholder={intl.formatMessage({ defaultMessage: "Ingrese un mensaje aquí..." })}
                 value={message}
                 onChange={onChange}
                 rightSection={rightSection}
@@ -119,7 +119,7 @@ export default function MessageInput(props: MessageInputProps) {
                     compact
                     onClick={onCustomizeSystemPromptClick}>
                     <span>
-                        <FormattedMessage defaultMessage={"Customize system prompt"} />
+                        <FormattedMessage defaultMessage={"Personalizar aviso del sistema"} />
                     </span>
                 </Button>
                 <Button variant="subtle"
@@ -128,7 +128,7 @@ export default function MessageInput(props: MessageInputProps) {
                     compact
                     onClick={onTemperatureClick}>
                     <span>
-                        <FormattedMessage defaultMessage="Temperature: {temperature, number, ::.0}"
+                        <FormattedMessage defaultMessage="Temperatura: {temperature, number, ::.0}"
                             values={{ temperature }} />
                     </span>
                 </Button>

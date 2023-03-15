@@ -30,7 +30,7 @@ export default function GenerationOptionsTab(props: any) {
         && (model?.trim() !== defaultModel.trim());
 
     const systemPromptOption = useMemo(() => (
-        <SettingsOption heading={intl.formatMessage({ defaultMessage: "System Prompt" })}
+        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Indicador del sistema" })}
                         focused={option === 'system-prompt'}>
             <Textarea
                 value={initialSystemPrompt || defaultSystemPrompt}
@@ -39,17 +39,17 @@ export default function GenerationOptionsTab(props: any) {
                 maxRows={10}
                 autosize />
             <p style={{ marginBottom: '0.7rem' }}>
-                <FormattedMessage defaultMessage="The System Prompt is shown to ChatGPT by the &quot;System&quot; before your first message. The <code>'{{ datetime }}'</code> tag is automatically replaced by the current date and time."
+                <FormattedMessage defaultMessage="El indicador del sistema se muestra a ChatGPT por el &quot;Sistema&quot; antes de su primer mensaje. La <code>'{{ datetime }}'</code> se reemplaza automáticamente por la fecha y hora actual."
                     values={{ code: chunk => <code style={{ whiteSpace: 'nowrap' }}>{chunk}</code> }} />
             </p>
             {resettableSystemPromopt && <Button size="xs" compact variant="light" onClick={onResetSystemPrompt}>
-                <FormattedMessage defaultMessage="Reset to default" />
+                <FormattedMessage defaultMessage="Restablecer a lo predeterminado" />
             </Button>}
         </SettingsOption>
     ), [option, initialSystemPrompt, resettableSystemPromopt, onSystemPromptChange, onResetSystemPrompt]);
 
     const modelOption = useMemo(() => (
-        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Model" })}
+        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Modelo" })}
                         focused={option === 'model'}>
             <Textarea
                 value={model || defaultModel}
@@ -58,21 +58,21 @@ export default function GenerationOptionsTab(props: any) {
                 maxRows={1}
                 autosize />
             <p style={{ marginBottom: '0.7rem' }}>
-                <FormattedMessage defaultMessage="The model name. You can find model names here: https://platform.openai.com/docs/models/overview"
+                <FormattedMessage defaultMessage="El nombre del modelo. Puede encontrar nombres de modelos aquí: https://platform.openai.com/docs/models/overview"
                     values={{ code: chunk => <code style={{ whiteSpace: 'nowrap' }}>{chunk}</code> }} />
             </p>
             {resettableModel && <Button size="xs" compact variant="light" onClick={onResetModel}>
-                <FormattedMessage defaultMessage="Reset to default" />
+                <FormattedMessage defaultMessage="Restablecer a lo predeterminado" />
             </Button>}
         </SettingsOption>
     ), [option, model, resettableModel, onModelChange, onResetModel]);
 
     const temperatureOption = useMemo(() => (
-        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Temperature: {temperature, number, ::.0}", }, { temperature })}
+        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Temperatura: {temperature, number, ::.0}", }, { temperature })}
                         focused={option === 'temperature'}>
             <Slider value={temperature} onChange={onTemperatureChange} step={0.1} min={0} max={1} precision={3} />
             <p>
-                <FormattedMessage defaultMessage="The temperature parameter controls the randomness of the AI's responses. Lower values will make the AI more predictable, while higher values will make it more creative." />
+                <FormattedMessage defaultMessage="El parámetro de temperatura controla la aleatoriedad de las respuestas de la IA. Los valores más bajos harán que la IA sea más predecible, mientras que los valores más altos la harán más creativa." />
             </p>
         </SettingsOption>
     ), [temperature, option, onTemperatureChange]);

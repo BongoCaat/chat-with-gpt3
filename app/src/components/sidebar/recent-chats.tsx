@@ -88,7 +88,7 @@ export default function RecentChats(props: any) {
                 ))}
             </ChatList>}
             {recentChats.length === 0 && <Empty>
-                No chats yet.
+                Aún no hay chats.
             </Empty>}
         </Container>
     );

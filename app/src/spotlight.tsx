@@ -25,7 +25,7 @@ export function useChatSpotlightProps() {
     const props = useMemo(() => ({
         shortcut: ['mod + P'],
         overlayColor: '#000000',
-        searchPlaceholder: intl.formatMessage({ defaultMessage: 'Search your chats' }),
+        searchPlaceholder: intl.formatMessage({ defaultMessage: 'Busca tus chats' }),
         searchIcon: <i className="fa fa-search" />,
         actions: search,
         filter: (query: string, items: any) => items,

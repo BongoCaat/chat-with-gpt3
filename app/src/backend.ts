@@ -78,7 +78,7 @@ export class Backend extends EventEmitter {
                 chat.messages.addMessages(response[chatID].messages);
                 chatManager.loadChat(chat);
             } catch (e) {
-                console.error('error loading chat', e);
+                console.error('error al cargar el chat', e);
             }
         }
 

@@ -17,22 +17,22 @@ export default function UserOptionsTab(props: any) {
 
     const elem = useMemo(() => (
         <SettingsTab name="user">
-            <SettingsOption heading={intl.formatMessage({ defaultMessage: "Your OpenAI API Key" })}
+            <SettingsOption heading={intl.formatMessage({ defaultMessage: "Su clave API de OpenAI" })}
                             focused={option === 'openai-api-key'}>
                 <TextInput
-                    placeholder={intl.formatMessage({ defaultMessage: "Paste your API key here" })}
+                    placeholder={intl.formatMessage({ defaultMessage: "Pegue su clave API aquí" })}
                     value={openaiApiKey || ''}
                     onChange={onOpenAIApiKeyChange} />
                 <p>
                     <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">
-                        <FormattedMessage defaultMessage="Find your API key here." />
+                        <FormattedMessage defaultMessage="Encuentre su clave API aquí." />
                     </a>
                 </p>
                 <p>
-                    <FormattedMessage defaultMessage="Your API key is stored only on this device and never transmitted to anyone except OpenAI." />
+                    <FormattedMessage defaultMessage="Su clave API se almacena solo en este dispositivo y nunca se transmite a nadie excepto a OpenAI." />
                 </p>
                 <p>
-                    <FormattedMessage defaultMessage="OpenAI API key usage is billed at a pay-as-you-go rate, separate from your ChatGPT subscription." />
+                    <FormattedMessage defaultMessage="El uso de la clave API de OpenAI se factura a una tarifa de pago por uso, aparte de su suscripción a ChatGPT." />
                 </p>
             </SettingsOption>
         </SettingsTab>
