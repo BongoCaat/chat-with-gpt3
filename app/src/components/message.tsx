@@ -208,15 +208,15 @@ export default function MessageComponent(props: { message: Message, last: boolea
         switch (role) {
             case 'user':
                 if (share) {
-                    return intl.formatMessage({ id: 'role-user-formal', defaultMessage: 'Usuario' });
+                    return intl.formatMessage({ id: 'role-user-formal', defaultMessage: 'Usuario', description: "Etiqueta que se muestra arriba de los mensajes escritos por el usuario (a diferencia de la IA) para la conversación compartida públicamente (tercera persona, formal)." });
                 } else {
-                    return intl.formatMessage({ id: 'role-user', defaultMessage: 'Yo' });
+                    return intl.formatMessage({ id: 'role-user', defaultMessage: 'Yo', description: "Etiqueta que se muestra arriba de los mensajes escritos por el usuario (a diferencia de la IA) en las propias sesiones de chat del usuario (primera persona)." });
                 }
                 break;
             case 'assistant':
-                return intl.formatMessage({ id: 'role-chatgpt', defaultMessage: 'ChatGPT 🤖' });
+                return intl.formatMessage({ id: 'role-chatgpt', defaultMessage: 'ChatGPT 🤖', description: "Etiqueta que se muestra arriba de los mensajes escritos por la IA (a diferencia del usuario)" });
             case 'system':
-                return intl.formatMessage({ id: 'role-system', defaultMessage: 'System' });
+                return intl.formatMessage({ id: 'role-system', defaultMessage: 'System', description: "Etiqueta que se muestra arriba de los mensajes insertados en la conversación automáticamente por el sistema (a diferencia del usuario o AI)" });
             default:
                 return role;
         }
@@ -243,7 +243,8 @@ export default function MessageComponent(props: { message: Message, last: boolea
                             {({ copy, copied }) => (
                                 <Button variant="subtle" size="sm" compact onClick={copy} style={{ marginLeft: '1rem' }}>
                                     <i className="fa fa-clipboard" />
-                                    <span>{copied ? <FormattedMessage defaultMessage="Copiado" /> : <FormattedMessage defaultMessage="Copiar" />}</span>
+                                    {copied ? <FormattedMessage defaultMessage="Copiado" description="Etiqueta para el botón de copiar al portapapeles después de una copia exitosa" />
+                                            : <FormattedMessage defaultMessage="Copiar" description="Etiqueta para el botón de copiar al portapapeles" />}
                                 </Button>
                             )}
                         </CopyButton>
@@ -251,7 +252,7 @@ export default function MessageComponent(props: { message: Message, last: boolea
                             <Button variant="subtle" size="sm" compact onClick={() => share(props.message.content)}>
                                 <i className="fa fa-share" />
                                 <span>
-                                    <FormattedMessage defaultMessage="Compartir" />
+                                    <FormattedMessage defaultMessage="Compartir" description="Etiqueta para un botón que comparte el texto de un mensaje de chat usando la funcionalidad de compartir del dispositivo del usuario" />
                                 </span>
                             </Button>
                         )}
@@ -261,14 +262,17 @@ export default function MessageComponent(props: { message: Message, last: boolea
                                 setEditing(v => !v);
                             }}>
                                 <i className="fa fa-edit" />
-                                <span>{editing ? <FormattedMessage defaultMessage="Cancelar" /> : <FormattedMessage defaultMessage="Editar" />}</span>
+                                <span>
+                                    {editing ? <FormattedMessage defaultMessage="Cancelar" description="Etiqueta para un botón que aparece cuando el usuario está editando el texto de uno de sus mensajes, para cancelar sin guardar los cambios" /> 
+                                        : <FormattedMessage defaultMessage="Editar" description="Etiqueta para el botón en el que el usuario puede hacer clic para editar el texto de uno de sus mensajes" />}
+                                </span>
                             </Button>
                         )}
                         {!context.isShare && props.message.role === 'assistant' && (
                             <Button variant="subtle" size="sm" compact onClick={() => context.regenerateMessage(props.message)}>
                                 <i className="fa fa-refresh" />
                                 <span>
-                                    <FormattedMessage defaultMessage="Regenerar" />
+                                    <FormattedMessage defaultMessage="Regenerar" description="Etiqueta del botón que se usa para pedirle a la IA que regenere uno de sus mensajes. Dado que las generaciones de mensajes son estocásticas, el mensaje resultante será diferente." />
                                 </span>
                             </Button>
                         )}
@@ -279,10 +283,10 @@ export default function MessageComponent(props: { message: Message, last: boolea
                             onChange={e => setContent(e.currentTarget.value)}
                             autosize={true} />
                         <Button variant="light" onClick={() => context.editMessage(props.message, content)}>
-                            <FormattedMessage defaultMessage="Guardar cambios" />
+                            <FormattedMessage defaultMessage="Guardar cambios" description="Etiqueta para un botón que aparece cuando el usuario está editando el texto de uno de sus mensajes, para guardar los cambios" />
                         </Button>
                         <Button variant="subtle" onClick={() => setEditing(false)}>
-                            <FormattedMessage defaultMessage="Cancelar" />
+                            <FormattedMessage defaultMessage="Cancelar" description="Etiqueta para un botón que aparece cuando el usuario está editando el texto de uno de sus mensajes, para cancelar sin guardar los cambios" />
                         </Button>
                     </Editor>)}
                 </div>

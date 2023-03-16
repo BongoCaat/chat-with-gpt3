@@ -7,6 +7,7 @@ import GenerationOptionsTab from './options';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { closeSettingsUI, selectSettingsTab, setTab } from '../../store/settings-ui';
 import SpeechOptionsTab from './speech';
+import { FormattedMessage } from 'react-intl';
 
 const Container = styled.div`
     padding: .4rem 1rem 1rem 1rem;
@@ -102,7 +103,9 @@ export default function SettingsDrawer(props: SettingsDrawerProps) {
                 </Tabs>
                 <div id="save">
                     <Button variant="light" fullWidth size="md" onClick={close}>
-                        Guardar y cerrar
+                    <FormattedMessage defaultMessage={"Guardar y cerrar"} 
+                            description="Etiqueta para el botón que cierra la pantalla Configuración, guardando los cambios"
+                            />
                     </Button>
                 </div>
             </Container>

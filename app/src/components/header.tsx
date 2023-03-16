@@ -160,7 +160,7 @@ export default function Header(props: HeaderProps) {
             <Helmet>
                 <title>
                     {props.title ? `${props.title} - ` : ''}
-                    {intl.formatMessage({ defaultMessage: "ChatGPT | BongoCaat#5645" })}
+                    {intl.formatMessage({ defaultMessage: "ChatGPT | BongoCaat#5645", description: "Etiqueta de título HTML" })}
                 </title>
             </Helmet>
             {!sidebarOpen && <Burger opened={sidebarOpen} onClick={onBurgerClick} aria-label={burgerLabel} transitionDuration={0} />}
@@ -169,7 +169,7 @@ export default function Header(props: HeaderProps) {
             <HeaderButton icon="search" onClick={spotlight.openSpotlight} />
             <HeaderButton icon="gear" onClick={openSettings} />
             {backend.current && !props.share && props.canShare && typeof navigator.share !== 'undefined' && <HeaderButton icon="share" onClick={props.onShare}>
-                <FormattedMessage defaultMessage="Share" />
+                <FormattedMessage defaultMessage="Compartir" description="Etiqueta para el botón utilizado para crear una URL compartida pública para un registro de chat" />
             </HeaderButton>}
             {backend.current && !context.authenticated && (
                 <HeaderButton onClick={() => {
@@ -180,13 +180,14 @@ export default function Header(props: HeaderProps) {
                     }
                 }}>
                     <FormattedMessage defaultMessage="Iniciar sesión <h>para sincronizar</h>"
+                        description="Etiqueta para el botón de inicio de sesión, que indica que el propósito de iniciar sesión es sincronizar tus datos entre dispositivos"
                         values={{
                             h: (chunks: any) => <span className="hide-on-mobile">{chunks}</span>
                         }} />
                 </HeaderButton>
             )}
             <HeaderButton icon="plus" onClick={onNewChat} loading={loading} variant="light">
-                <FormattedMessage defaultMessage="Nuevo chat" />
+                <FormattedMessage defaultMessage="Nuevo chat" description="Etiqueta del botón utilizado para iniciar una nueva sesión de chat" />
             </HeaderButton>
         </HeaderContainer>
     ), [sidebarOpen, onBurgerClick, props.title, props.share, props.canShare, props.onShare, openSettings, onNewChat, loading, context.authenticated, context.isHome, context.isShare, spotlight.openSpotlight]);

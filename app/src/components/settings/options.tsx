@@ -30,7 +30,7 @@ export default function GenerationOptionsTab(props: any) {
         && (model?.trim() !== defaultModel.trim());
 
     const systemPromptOption = useMemo(() => (
-        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Indicador del sistema" })}
+        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Indicador del sistema", description: "Dirigirse a la configuración que permite a los usuarios personalizar el indicador del sistema, en la pantalla de configuración" })}
                         focused={option === 'system-prompt'}>
             <Textarea
                 value={initialSystemPrompt || defaultSystemPrompt}
@@ -49,7 +49,7 @@ export default function GenerationOptionsTab(props: any) {
     ), [option, initialSystemPrompt, resettableSystemPromopt, onSystemPromptChange, onResetSystemPrompt]);
 
     const modelOption = useMemo(() => (
-        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Modelo" })}
+        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Modelo", description: "Dirigirse a la configuración que permite a los usuarios elegir un modelo con el que interactuar, en la pantalla de configuración" })}
                         focused={option === 'model'}>
             <Textarea
                 value={model || defaultModel}
@@ -68,7 +68,10 @@ export default function GenerationOptionsTab(props: any) {
     ), [option, model, resettableModel, onModelChange, onResetModel]);
 
     const temperatureOption = useMemo(() => (
-        <SettingsOption heading={intl.formatMessage({ defaultMessage: "Temperatura: {temperature, number, ::.0}", }, { temperature })}
+        <SettingsOption heading={intl.formatMessage({
+            defaultMessage: "Temperatura: {temperature, number, ::.0}", 
+            description: "Etiqueta para el botón que abre un modal para configurar la 'temperatura' (aleatoriedad) de las respuestas de IA",
+        }, { temperature })}
                         focused={option === 'temperature'}>
             <Slider value={temperature} onChange={onTemperatureChange} step={0.1} min={0} max={1} precision={3} />
             <p>

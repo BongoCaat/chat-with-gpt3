@@ -33,7 +33,7 @@ export default function SpeechOptionsTab() {
     }, [elevenLabsApiKey]);
 
     const apiKeyOption = useMemo(() => (
-        <SettingsOption heading={intl.formatMessage({ defaultMessage: 'Su clave API de texto a voz de ElevenLabs (Opcional)' })}
+        <SettingsOption heading={intl.formatMessage({ defaultMessage: 'Su clave API de texto a voz de ElevenLabs (Opcional)', description: "Rumbo a la configuración de la clave API de ElevenLabs en la pantalla de configuración" })}
                         focused={option === 'elevenlabs-api-key'}>
             <TextInput placeholder={intl.formatMessage({ defaultMessage: "Pegue su clave API aquí" })}
                 value={elevenLabsApiKey || ''} onChange={onElevenLabsApiKeyChange} />
@@ -50,7 +50,7 @@ export default function SpeechOptionsTab() {
     ), [option, elevenLabsApiKey, onElevenLabsApiKeyChange]);
 
     const voiceOption = useMemo(() => (
-        <SettingsOption heading={intl.formatMessage({ defaultMessage: 'Voz' })}
+        <SettingsOption heading={intl.formatMessage({ defaultMessage: 'Voz', description: 'Dirigirse a la configuración que permite a los usuarios elegir una voz de texto a voz de ElevenLabs, en la pantalla de configuración' })}
                         focused={option === 'elevenlabs-voice'}>
             <Select
                 value={voice}
@@ -64,7 +64,7 @@ export default function SpeechOptionsTab() {
             <Button onClick={() => (document.getElementById('voice-preview') as HTMLMediaElement)?.play()} variant='light' compact style={{ marginTop: '1rem' }}>
                 <i className='fa fa-headphones' />
                 <span>
-                    <FormattedMessage defaultMessage="Vista previa de voz" />
+                    <FormattedMessage defaultMessage="Vista previa de voz" description="Etiqueta para el botón que reproduce una vista previa de la voz de texto a voz de ElevenLabs seleccionada" />
                 </span>
             </Button>
         </SettingsOption>

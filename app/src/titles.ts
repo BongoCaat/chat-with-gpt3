@@ -2,7 +2,7 @@ import { createChatCompletion, defaultModel } from "./openai";
 import { OpenAIMessage, Chat } from "./types";
 
 const systemPrompt = `
-Lea el siguiente intercambio y escriba un título breve y conciso que describa el tema.
+Lea el siguiente intercambio y escriba un título breve y conciso que describa el tema (en el idioma del usuario).
 `.trim();
 
 const userPrompt = (user: string, assistant: string) => `

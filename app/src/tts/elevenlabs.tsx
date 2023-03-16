@@ -272,13 +272,13 @@ export function ElevenLabsReaderButton(props: { selector: string }) {
         <Button variant="subtle" size="sm" compact onClickCapture={onClick} loading={status === 'init'}>
             {status !== 'init' && <i className="fa fa-headphones" />}
             {status === 'idle' && <span>
-                <FormattedMessage defaultMessage="Play" />
+                <FormattedMessage defaultMessage="Play" description="Etiqueta del botón que inicia la reproducción de texto a voz" />
             </span>}
             {status === 'buffering' && <span>
-                <FormattedMessage defaultMessage="Cargando audio..." />
+                <FormattedMessage defaultMessage="Cargando audio..." description="Mensaje que indica que el audio de texto a voz se está almacenando en búfer" />
             </span>}
             {status !== 'idle' && status !== 'buffering' && <span>
-                <FormattedMessage defaultMessage="Stop" />
+                <FormattedMessage defaultMessage="Stop" description="Etiqueta del botón que detiene la reproducción de texto a voz" />
             </span>}
         </Button>
     );
