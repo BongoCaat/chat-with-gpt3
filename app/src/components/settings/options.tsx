@@ -1,6 +1,6 @@
 import SettingsTab from "./tab";
 import SettingsOption from "./option";
-import { Button, Slider, Textarea } from "@mantine/core";
+import { Button, Select, Slider, Textarea } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import { defaultSystemPrompt, defaultModel } from "../../openai";
 import { useAppDispatch, useAppSelector } from "../../store";
@@ -18,7 +18,7 @@ export default function GenerationOptionsTab(props: any) {
 
     const dispatch = useAppDispatch();
     const onSystemPromptChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => dispatch(setSystemPrompt(event.target.value)), [dispatch]);
-    const onModelChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => dispatch(setModel(event.target.value)), [dispatch]);
+    const onModelChange = useCallback((value: string) => dispatch(setModel(value)), [dispatch]);
     const onResetSystemPrompt = useCallback(() => dispatch(resetSystemPrompt()), [dispatch]);
     const onResetModel = useCallback(() => dispatch(resetModel()), [dispatch]);
     const onTemperatureChange = useCallback((value: number) => dispatch(setTemperature(value)), [dispatch]);
@@ -51,16 +51,19 @@ export default function GenerationOptionsTab(props: any) {
     const modelOption = useMemo(() => (
         <SettingsOption heading={intl.formatMessage({ defaultMessage: "Modelo", description: "Dirigirse a la configuración que permite a los usuarios elegir un modelo con el que interactuar, en la pantalla de configuración" })}
                         focused={option === 'model'}>
-            <Textarea
+            <Select
                 value={model || defaultModel}
-                onChange={onModelChange}
-                minRows={1}
-                maxRows={1}
-                autosize />
-            <p style={{ marginBottom: '0.7rem' }}>
-                <FormattedMessage defaultMessage="El nombre del modelo. Puede encontrar nombres de modelos aquí: https://platform.openai.com/docs/models/overview"
-                    values={{ code: chunk => <code style={{ whiteSpace: 'nowrap' }}>{chunk}</code> }} />
-            </p>
+                data={[
+                    { label: "GPT 3.5 Turbo (Predeterminado)", value: "gpt-3.5-turbo" },
+                    { label: "GPT 4 (Requiere Invitación)", value: "gpt-4" },
+                ]}
+                onChange={onModelChange} />
+            {model === 'gpt-4' && (
+                <p style={{ marginBottom: '0.7rem' }}>
+                    <FormattedMessage defaultMessage="Nota: GPT-4 solo funcionará si a su cuenta de OpenAI se le ha otorgado acceso al nuevo modelo. <a>Solicita acceso aquí.</a>"
+                        values={{ a: chunk => <a href="https://openai.com/waitlist/gpt-4-api" target="_blank" rel="noreferer">{chunk}</a> }} />
+                </p>
+            )}
             {resettableModel && <Button size="xs" compact variant="light" onClick={onResetModel}>
                 <FormattedMessage defaultMessage="Restablecer a lo predeterminado" />
             </Button>}
