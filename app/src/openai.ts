@@ -101,18 +101,34 @@ export async function createStreamingChatCompletion(messages: OpenAIMessage[], p
         }),
     }) as SSE;
 
-    let chunks: string[] = [];
+    // TODO: enable (optional) server-side completion
+    /*
+    const eventSource = new SSE('/chatapi/completion/streaming', {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json, text/plain, *\/*',
+            'Authorization': `Bearer ${(backend.current as any).token}`,
+            'Content-Type': 'application/json',
+        },
+        payload: JSON.stringify({
+            "model": "gpt-3.5-turbo",
+            "messages": messagesToSend,
+            "temperature": parameters.temperature,
+            "stream": true,
+        }),
+    }) as SSE;
+    */
+
+    let contents = '';
 
     eventSource.addEventListener('error', (event: any) => {
-        if (chunks.length === 0) {
+        if (!contents) {
             emitter.emit('error');
         }
     });
 
     eventSource.addEventListener('message', async (event: any) => {
         if (event.data === '[DONE]') {
-            const response = chunks.join('');
-            emitter.emit('data', response);
             emitter.emit('done');
             return;
         }
@@ -120,8 +136,8 @@ export async function createStreamingChatCompletion(messages: OpenAIMessage[], p
         try {
             const chunk = parseResponseChunk(event.data);
             if (chunk.choices && chunk.choices.length > 0) {
-                const content = chunk.choices[0]?.delta?.content || '';
-                chunks.push(content);
+                contents += chunk.choices[0]?.delta?.content || '';
+                emitter.emit('data', contents);
             }
         } catch (e) {
             console.error(e);
