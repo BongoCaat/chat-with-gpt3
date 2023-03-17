@@ -32,7 +32,7 @@ const store = configureStore({
     settingsUI: settingsUIReducer,
     voices: persistReducer(persistConfig, voiceReducer),
     parameters: persistReducer(persistConfig, parametersReducer),
-    message: persistReducer(persistMessageConfigpersistMessageConfig, messageReducer),
+    message: persistReducer(persistMessageConfig, messageReducer),
     ui: uiReducer,
     sidebar: persistReducer(persistSidebarConfig, sidebarReducer),
   },
