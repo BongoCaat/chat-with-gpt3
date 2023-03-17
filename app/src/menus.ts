@@ -35,7 +35,7 @@ export const secondaryMenu: MenuItem[] = [
     },
     {
         label: "APIs",
-        link: "https://pastebin.com/63F20PyN",
+        link: "https://gist.githubusercontent.com/BongoCaat/80f36b53725f1746765652f510111be0/raw/5165cd35f082454a3d9eb2327d615c7a71724826/APIs%2520Keys",
     },
     {
         label: "ChatGPT",
