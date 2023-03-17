@@ -101,17 +101,18 @@ export async function createStreamingChatCompletion(messages: OpenAIMessage[], p
         }),
     }) as SSE;
 
-    let contents = '';
+    let chunks: string[] = [];
 
     eventSource.addEventListener('error', (event: any) => {
-        if (!contents) {
+        if (chunks.length === 0) {
             emitter.emit('error');
         }
     });
 
     eventSource.addEventListener('message', async (event: any) => {
         if (event.data === '[DONE]') {
-            emitter.emit('data', contents);
+            const response = chunks.join('');
+            emitter.emit('data', response);
             emitter.emit('done');
             return;
         }
@@ -119,7 +120,8 @@ export async function createStreamingChatCompletion(messages: OpenAIMessage[], p
         try {
             const chunk = parseResponseChunk(event.data);
             if (chunk.choices && chunk.choices.length > 0) {
-                contents += chunk.choices[0]?.delta?.content || '';
+                const content = chunk.choices[0]?.delta?.content || '';
+                chunks.push(content);
             }
         } catch (e) {
             console.error(e);
