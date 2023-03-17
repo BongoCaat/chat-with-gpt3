@@ -101,24 +101,6 @@ export async function createStreamingChatCompletion(messages: OpenAIMessage[], p
         }),
     }) as SSE;
 
-    // TODO: enable (optional) server-side completion
-    /*
-    const eventSource = new SSE('/chatapi/completion/streaming', {
-        method: "POST",
-        headers: {
-            'Accept': 'application/json, text/plain, *\/*',
-            'Authorization': `Bearer ${(backend.current as any).token}`,
-            'Content-Type': 'application/json',
-        },
-        payload: JSON.stringify({
-            "model": "gpt-3.5-turbo",
-            "messages": messagesToSend,
-            "temperature": parameters.temperature,
-            "stream": true,
-        }),
-    }) as SSE;
-    */
-
     let contents = '';
 
     eventSource.addEventListener('error', (event: any) => {
@@ -129,6 +111,7 @@ export async function createStreamingChatCompletion(messages: OpenAIMessage[], p
 
     eventSource.addEventListener('message', async (event: any) => {
         if (event.data === '[DONE]') {
+            emitter.emit('data', contents);
             emitter.emit('done');
             return;
         }
@@ -137,7 +120,6 @@ export async function createStreamingChatCompletion(messages: OpenAIMessage[], p
             const chunk = parseResponseChunk(event.data);
             if (chunk.choices && chunk.choices.length > 0) {
                 contents += chunk.choices[0]?.delta?.content || '';
-                emitter.emit('data', contents);
             }
         } catch (e) {
             console.error(e);
