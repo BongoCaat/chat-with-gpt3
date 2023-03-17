@@ -21,7 +21,7 @@ const persistSidebarConfig = {
 }
 
 const persistMessageConfig = {
-  key: 'message",
+  key: 'message',
   storage,
 }
 
