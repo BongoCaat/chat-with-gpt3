@@ -37,7 +37,6 @@ const ChatListItemLink = styled(Link)`
 
     &.selected {
         background: #2b3d54;
-        pointer-events: none;
     }
 
     strong {
@@ -69,7 +68,7 @@ function ChatListItem(props: { chat: any, onClick: any, selected: boolean }) {
     const modals = useModals();
     const navigate = useNavigate();
 
-    const handleDelete = useCallback(() => {
+    const onDelete = useCallback(() => {
         modals.openConfirmModal({
             title: "Estas seguro de que quieres borrar este chat?",
             children: <p style={{ lineHeight: 1.7 }}> El chat "{c.title}" va a ser permanentemente borrado. Esto no se puede deshacer.</p>,
@@ -94,7 +93,7 @@ function ChatListItem(props: { chat: any, onClick: any, selected: boolean }) {
                             confirm: "Intenta nuevamente",
                             cancel: "Cancelar",
                         },
-                        onConfirm: handleDelete,
+                        onConfirm: onDelete,
                     });
                 }
             },
@@ -102,13 +101,10 @@ function ChatListItem(props: { chat: any, onClick: any, selected: boolean }) {
     }, [c.chatID, c.title]);
 
     return (
-        <ChatListItemLink 
-            to={'/chat/' + c.chatID}
-            onClick={props.onClick} 
-            // onTouchStart={props.onClick}   // Agregado onTouchStart para eventos táctiles
-            data-chat-id={c.chatID} 
-            className={props.selected ? 'selected' : ''}
-        >
+        <ChatListItemLink to={'/chat/' + c.chatID}
+            onClick={props.onClick}
+            data-chat-id={c.chatID}
+            className={props.selected ? 'selected' : ''}>
             <strong>{c.title || <FormattedMessage defaultMessage={"Untitled"} description="Título predeterminado para sesiones de chat sin título" />}</strong>
             {props.selected && (
                 <Menu>
@@ -118,7 +114,7 @@ function ChatListItem(props: { chat: any, onClick: any, selected: boolean }) {
                         </ActionIcon>
                     </Menu.Target>
                     <Menu.Dropdown>
-                        <Menu.Item onClick={handleDelete} color="red" icon={<i className="fa fa-trash" />}>
+                        <Menu.Item onClick={onDelete} color="red" icon={<i className="fa fa-trash" />}>
                             <FormattedMessage defaultMessage={"Borrar este chat"} />
                         </Menu.Item>
                     </Menu.Dropdown>
@@ -135,7 +131,7 @@ export default function RecentChats(props: any) {
     const currentChatID = context.currentChat.chat?.id;
     const recentChats = context.chat.search.query('');
 
-    const handleClick = useCallback(() => {
+    const onClick = useCallback(() => {
         if (window.matchMedia('(max-width: 40em)').matches) {
             dispatch(toggleSidebar());
         }
@@ -154,7 +150,7 @@ export default function RecentChats(props: any) {
         <Container>
             {recentChats.length > 0 && <ChatList>
                 {recentChats.map(c => (
-                    <ChatListItem key={c.chatID} chat={c} onClick={handleClick} selected={c.chatID === currentChatID} />
+                    <ChatListItem key={c.chatID} chat={c} onClick={onClick} selected={c.chatID === currentChatID} />
                 ))}
             </ChatList>}
             {recentChats.length === 0 && <Empty>
