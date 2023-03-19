@@ -105,7 +105,7 @@ function ChatListItem(props: { chat: any, onClick: any, selected: boolean }) {
         <ChatListItemLink 
             to={'/chat/' + c.chatID}
             onClick={props.onClick} 
-            onTouchStart={props.onClick}   // Agregado onTouchStart para eventos táctiles
+            // onTouchStart={props.onClick}   // Agregado onTouchStart para eventos táctiles
             data-chat-id={c.chatID} 
             className={props.selected ? 'selected' : ''}
         >
