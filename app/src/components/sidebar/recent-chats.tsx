@@ -103,6 +103,7 @@ function ChatListItem(props: { chat: any, onClick: any, selected: boolean }) {
     return (
         <ChatListItemLink to={'/chat/' + c.chatID}
             onClick={props.onClick}
+            onTouchStart={props.onClick}
             data-chat-id={c.chatID}
             className={props.selected ? 'selected' : ''}>
             <strong>{c.title || <FormattedMessage defaultMessage={"Untitled"} description="Título predeterminado para sesiones de chat sin título" />}</strong>
