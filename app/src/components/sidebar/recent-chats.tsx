@@ -109,8 +109,8 @@ function ChatListItem(props: { chat: any, onClick: any, selected: boolean }) {
             {props.selected && (
                 <Menu>
                     <Menu.Target>
-                        <ActionIcon>
-                            <i className="fas fa-ellipsis" />
+                        <ActionIcon color="green">
+                            <i className="fa fa-bars" style={{ fontSize: '90%' }} />
                         </ActionIcon>
                     </Menu.Target>
                     <Menu.Dropdown>
