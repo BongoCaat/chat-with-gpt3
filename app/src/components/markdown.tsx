@@ -95,7 +95,7 @@ export function Markdown(props: MarkdownProps) {
                                             a.click();
                                         }}>
                                             <i className="fa fa-download" />
-                                            <span><FormattedMessage defaultMessage="Download SVG" /></span>
+                                            <span><FormattedMessage defaultMessage="Descargar SVG" /></span>
                                         </Button>
                                     )}
                                 <CopyButton value={code}>
