@@ -49,47 +49,51 @@ export function getTokenCountForMessages(messages: OpenAIMessage[]): number {
 export function selectMessagesToSendSafely(messages: OpenAIMessage[]) {
     const maxTokens = 4096;
 
-    if (getTokenCountForMessages(messages) <= maxTokens) {
+    let tokenCount = getTokenCountForMessages(messages);
+
+    if (tokenCount <= maxTokens) {
         return messages;
     }
 
-    const insertedSystemMessage = serializeChatMLMessage('system', 'Several messages not included due to space constraints');
-    const insertedSystemMessageTokenCount = getTokenCount(insertedSystemMessage);
-    const targetTokens = maxTokens - insertedSystemMessageTokenCount;
-    const firstUserMessageIndex = messages.findIndex(m => m.role === 'user');
     let output = [...messages];
-
     let removed = false;
 
     // first, remove items in the 'middle' of the conversation until we're under the limit
-    for (let i = firstUserMessageIndex + 1; i < messages.length - 1; i++) {
-        if (getTokenCountForMessages(output) > targetTokens) {
-            output.splice(i, 1);
-            removed = true;
-        }
+    for (let i = output.length - 2; i > 0 && tokenCount > maxTokens; i--) {
+        tokenCount -= getTokenCount(serializeChatMLMessage(output[i].role, output[i].content));
+        output.splice(i, 1);
+        removed = true;
     }
 
     // if we're still over the limit, trim message contents from oldest to newest (excluding the latest)
-    if (getTokenCountForMessages(output) > targetTokens) {
-        for (let i = 0; i < output.length - 1 && getTokenCountForMessages(output) > targetTokens; i++) {
-            output[i].content = shortenStringToTokenCount(output[i].content, 20);
-            removed = true;
+    if (tokenCount > maxTokens) {
+        for (let i = 0; i < output.length - 1 && tokenCount > maxTokens; i++) {
+            const oldContent = output[i].content;
+            const shortenedContent = shortenStringToTokenCount(oldContent, 20);
+
+            if (shortenedContent !== oldContent) {
+                tokenCount -= getTokenCount(serializeChatMLMessage(output[i].role, oldContent));
+                tokenCount += getTokenCount(serializeChatMLMessage(output[i].role, shortenedContent));
+                output[i].content = shortenedContent;
+                removed = true;
+            }
         }
     }
 
     // if that still didn't work, just keep the system prompt and the latest message (truncated as needed)
-    if (getTokenCountForMessages(output) > targetTokens) {
+    if (tokenCount > maxTokens) {
         const systemMessage = output.find(m => m.role === 'system')!;
         const latestMessage = { ...messages[messages.length - 1] };
         output = [systemMessage, latestMessage];
         removed = true;
         
-        const excessTokens = Math.max(0, getTokenCountForMessages(output) - targetTokens);
+        const excessTokens = Math.max(0, tokenCount - maxTokens);
 
         if (excessTokens) {
             const tokens = enc.encode(latestMessage.content);
             const buffer = enc.decode(tokens.slice(0, Math.max(0, tokens.length - excessTokens)));
             latestMessage.content = new TextDecoder().decode(buffer);
+            tokenCount = maxTokens;
         }
     }
 
