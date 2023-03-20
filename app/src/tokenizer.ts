@@ -47,7 +47,7 @@ export function getTokenCountForMessages(messages: OpenAIMessage[]): number {
 }
 
 export function selectMessagesToSendSafely(messages: OpenAIMessage[]) {
-    const maxTokens = 8192;
+    const maxTokens = 4096;
 
     if (getTokenCountForMessages(messages) <= maxTokens) {
         return messages;
