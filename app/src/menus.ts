@@ -29,13 +29,12 @@ export const secondaryMenu: MenuItem[] = [
         icon: "discord fab",
     },*/
     {
-        label: "GPT Prompts",
+        label: "Prompts",
         link: "https://github.com/f/awesome-chatgpt-prompts",
-        icon: "external-link-alt",
     },
     {
         label: "APIs",
-        link: "https://controlc.com/88ef1c4a",
+        link: "https://controlc.com/49931130",
     },
     {
         label: "ChatGPT",
