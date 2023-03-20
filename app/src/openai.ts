@@ -107,11 +107,11 @@ export async function createStreamingChatCompletion(messages: OpenAIMessage[], p
         method: "POST",
         headers: {
             'Accept': 'application/json, text/plain, *\/*',
-            'Authorization': `Bearer ${(backend.current as any).token}`,
+            'Authorization': `Bearer ${parameters.apiKey}`,
             'Content-Type': 'application/json',
         },
         payload: JSON.stringify({
-            "model": "gpt-3.5-turbo",
+            "model": parameters.model,
             "messages": messagesToSend,
             "temperature": parameters.temperature,
             "stream": true,
