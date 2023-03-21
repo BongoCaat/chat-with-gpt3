@@ -59,11 +59,14 @@ export default function GenerationOptionsTab(props: any) {
                     { label: "GPT 4 (32K)" , value: "gpt-4-32k" },
                 ]}
                 onChange={onModelChange} />
-            {model === 'gpt-4', 'gpt-4-32k' && (
+            {model === 'gpt-4' && (
                 <p style={{ marginBottom: '0.7rem' }}>
                     <FormattedMessage defaultMessage="Nota: GPT-4 solo funcionará si a su cuenta de OpenAI se le ha otorgado acceso al nuevo modelo. <a>Solicita acceso aquí.</a>"
                         values={{ a: chunk => <a href="https://openai.com/waitlist/gpt-4-api" target="_blank" rel="noreferer">{chunk}</a> }} />
                 </p>
+            {modelVariant === 'gpt-4-32k' && (
+                <p style= {{marginBottom: '0.7rem' }}>
+                 <FormattedMessage defaultMessage="Este es el modelo GPT-4-32k.</p> <p>Tiene una longitud máxima de 32768 tokens y está optimizado para chat y otras tareas de lenguaje.</p>"
             )}
             {resettableModel && <Button size="xs" compact variant="light" onClick={onResetModel}>
                 <FormattedMessage defaultMessage="Restablecer a lo predeterminado" />
