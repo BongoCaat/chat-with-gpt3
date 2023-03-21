@@ -56,6 +56,7 @@ export default function GenerationOptionsTab(props: any) {
                 data={[
                     { label: "GPT 3.5 Turbo (Predeterminado)", value: "gpt-3.5-turbo" },
                     { label: "GPT 4 (Requiere Invitación)", value: "gpt-4" },
+                    { label: "Code-davinci", value: "code-davinci-002" },
                 ]}
                 onChange={onModelChange} />
             {model === 'gpt-4' && (
