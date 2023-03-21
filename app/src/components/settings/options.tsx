@@ -56,10 +56,10 @@ export default function GenerationOptionsTab(props: any) {
                 data={[
                     { label: "GPT 3.5 Turbo (Predeterminado)", value: "gpt-3.5-turbo" },
                     { label: "GPT 4 (Requiere Invitación)", value: "gpt-4" },
-                    { label: "Code-davinci", value: "code-davinci-002" },
+                    { label: "GPT 4 (32K)" , value: "gpt-4-32k" },
                 ]}
                 onChange={onModelChange} />
-            {model === 'gpt-4' && (
+            {model === 'gpt-4', 'gpt-4-32k' && (
                 <p style={{ marginBottom: '0.7rem' }}>
                     <FormattedMessage defaultMessage="Nota: GPT-4 solo funcionará si a su cuenta de OpenAI se le ha otorgado acceso al nuevo modelo. <a>Solicita acceso aquí.</a>"
                         values={{ a: chunk => <a href="https://openai.com/waitlist/gpt-4-api" target="_blank" rel="noreferer">{chunk}</a> }} />
