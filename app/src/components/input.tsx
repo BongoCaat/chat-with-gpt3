@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { Button, Text, ActionIcon, Textarea, Loader, Group, useMantineTheme } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import { Button, Text, ActionIcon, Textarea, Loader, Group, useMantineTheme, Checkbox, Center } from '@mantine/core';
+import { useLocalStorage, useMediaQuery } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
@@ -26,9 +26,18 @@ const Container = styled.div`
         text-align: right;
     }
     .settings-button {
-        margin: 0.5rem -0.4rem 0.5rem 1rem;
         font-size: 0.7rem;
         color: #999;
+    }
+    .inner > .bottom {
+        display: flex;
+        justify-content: space-between;
+    }
+    @media (max-width: 600px) {
+        .inner > .bottom {
+            flex-direction: column;
+            align-items: flex-start;
+        }
     }
 `;
 
@@ -85,6 +94,7 @@ export default function MessageInput(props: MessageInputProps) {
     const recorder = useMemo(() => new MicRecorder({ bitRate: 128 }), []);
     const useOpenAIWhisper = useAppSelector(selectUseOpenAIWhisper);
     const openAIApiKey = useAppSelector(selectOpenAIApiKey);
+    const [isEnterToSend, setIsEnterToSend] = useLocalStorage({ key: 'isEnterToSend', defaultValue: false})
 
     const context = useAppContext();
     const dispatch = useAppDispatch();
@@ -233,11 +243,11 @@ export default function MessageInput(props: MessageInputProps) {
 
 
     const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && e.shiftKey === false && !props.disabled) {
+        if(e.key === 'Enter' && e.shiftKey === false && !props.disabled && isEnterToSend) {
             e.preventDefault();
             onSubmit();
         }
-    }, [onSubmit, props.disabled]);
+    }, [isEnterToSend, onSubmit, props.disabled]);
 
     const rightSection = useMemo(() => {
 
@@ -297,27 +307,32 @@ export default function MessageInput(props: MessageInputProps) {
                 rightSection={rightSection}
                 rightSectionWidth={context.generating ? 100 : 55}
                 onKeyDown={onKeyDown} />
-            <div>
-                <Button variant="subtle"
-                    className="settings-button"
-                    size="xs"
-                    compact
-                    onClick={onCustomizeSystemPromptClick}>
-                    <span>
-                        <FormattedMessage defaultMessage={"Personalizar aviso del sistema"} description="Etiqueta para el botón que abre un modal para personalizar el 'aviso del sistema', un mensaje que se usa para personalizar e influir en cómo responde la IA." />
-                    </span>
-                </Button>
-                <Button variant="subtle"
-                    className="settings-button"
-                    size="xs"
-                    compact
-                    onClick={onTemperatureClick}>
-                    <span>
-                        <FormattedMessage defaultMessage="Temperatura: {temperature, number, ::.0}"
-                            description="Etiqueta para el botón que abre un modal para configurar la 'temperatura' (aleatoriedad) de las respuestas de IA"
-                            values={{ temperature }} />
-                    </span>
-                </Button>
+            <div className="bottom">
+                <Center>
+                    <Checkbox size="xs" label="Enter to send" checked={!isEnterToSend} onChange={(v) => setIsEnterToSend(!v.currentTarget.checked)}/>
+                </Center>
+                <Group my="sm" spacing="xs">
+                    <Button variant="subtle"
+                        className="settings-button"
+                        size="xs"
+                        compact
+                        onClick={onCustomizeSystemPromptClick}>
+                        <span>
+                            <FormattedMessage defaultMessage={"Personalizar aviso del sistema"} description="Etiqueta para el botón que abre un modal para personalizar el 'mensaje del sistema', un mensaje que se usa para personalizar e influir en cómo responde la IA." />
+                        </span>
+                    </Button>
+                    <Button variant="subtle"
+                        className="settings-button"
+                        size="xs"
+                        compact
+                        onClick={onTemperatureClick}>
+                        <span>
+                            <FormattedMessage defaultMessage="Temperatura: {temperature, number, ::.0}"
+                                description="Etiqueta para el botón que abre un modal para configurar la 'temperatura' (aleatoriedad) de las respuestas de IA"
+                                values={{ temperature }} />
+                        </span>
+                    </Button>
+                </Group>
             </div>
         </div>
     </Container>;
