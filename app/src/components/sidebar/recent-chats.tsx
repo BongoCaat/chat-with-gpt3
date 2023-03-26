@@ -333,7 +333,7 @@ export default function RecentChats(props: any) {
         style={{ marginTop: '1rem', marginBottom: '1rem' }}
       />
       {searchQuery && (
-        <Button variant="filled" onClick={handleClearSearch}>
+        <Button variant="filled" onClick={handleClearSearch} style={{ marginBottom: '0.7rem'}} >
           Borrar búsqueda
         </Button>
       )}
