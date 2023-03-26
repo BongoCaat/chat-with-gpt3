@@ -83,11 +83,23 @@ const ChatListItemLink = styled(Link)`
   }
 `;
 
-function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
+function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index: number; selectedIndex: number; onSelect: (chatID: string, index: number) => void;}) {
   const c = props.chat;
   const context = useAppContext();
   const modals = useModals();
   const navigate = useNavigate();
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [newTitle, setNewTitle] = useState(c.title || '');
+
+  useEffect(() => {
+    setNewTitle(c.title || '');
+  }, [c.title]);
+  
+  useEffect(() => {
+    if (!editingTitle && newTitle !== c.title) {
+      setNewTitle(c.title || '');
+    }
+  }, [c.title, editingTitle, newTitle]);
 
   const onDelete = useCallback(() => {
     modals.openConfirmModal({
@@ -131,6 +143,39 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
     });
   }, [c.chatID, c.title]);
 
+  const onEditTitle = useCallback(() => {
+    setEditingTitle(true);
+  }, []);
+
+  const onSaveTitle = useCallback(async () => {
+    try {
+      await backend.current?.updateChatTitle(c.chatID, newTitle);
+      context.chat.updateChatTitle(c.chatID, newTitle);
+      setEditingTitle(false);
+      setNewTitle(newTitle); // Actualiza el estado "newTitle" con el nuevo título
+    } catch (e) {
+      console.error(e);
+      modals.openConfirmModal({
+        title: 'Algo salió mal',
+        children: (
+          <p style={{ lineHeight: 1.7 }}>
+            The chat "{c.title}" title could not be updated.
+          </p>
+        ),
+        labels: {
+          confirm: 'Intenta nuevamente',
+          cancel: 'Cancelar',
+        },
+        onConfirm: onSaveTitle,
+      });
+    }
+  }, [c.chatID, c.title, newTitle]);  
+
+  const onCancelEditTitle = useCallback(() => {
+    setNewTitle(c.title || '');
+    setEditingTitle(false);
+  }, [c.title]);
+
   return (
     <ChatListItemLink
       to={'/chat/' + c.chatID}
@@ -139,21 +184,33 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
       className={props.selected ? 'selected' : ''}
     >
       <strong>
-        {c.title || (
-          <FormattedMessage
-            defaultMessage={'Untitled'}
-            description="Título predeterminado para sesiones de chat sin título"
+        {editingTitle ? (
+          <Input
+            placeholder="Nuevo título"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            style={{ width: '95%', fontSize: '80%', marginBottom: '0.7rem', marginTop: '0.5rem' }}
           />
+        ) : (
+          c.title || (
+            <FormattedMessage
+              defaultMessage={'Untitled'}
+              description="Título predeterminado para sesiones de chat sin título"
+            />
+          )
         )}
       </strong>
       {props.selected && (
         <Menu>
           <Menu.Target>
             <ActionIcon color="green">
-              <i className="fa fa-bars" style={{ fontSize: '90%' }} />
+              <i className="fa fa-bars" style={{ fontSize: '80%' }} />
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown>
+            <Menu.Item onClick={onEditTitle} icon={<i className="fa fa-edit" />}>
+              <FormattedMessage defaultMessage={'Editar título'} />
+            </Menu.Item>
             <Menu.Item
               onClick={onDelete}
               color="red"
@@ -163,6 +220,24 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
+      )}
+      {editingTitle && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="outline"
+            onClick={onCancelEditTitle}
+            style={{ marginRight: '1.0rem' }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onSaveTitle}
+            style={{ marginRight: '2.0rem' }}
+          >
+            Guardar
+          </Button>
+        </div>
       )}
     </ChatListItemLink>
   );
@@ -177,6 +252,7 @@ export default function RecentChats(props: any) {
   const [scrollPosition, setScrollPosition] = useState(0);
 
   const recentChats = context.chat.search.query(searchQuery);
+  const [selectedChatIndex, setSelectedChatIndex] = useState(-1);
 
   const onClick = useCallback(
     (e: React.MouseEvent) => {
@@ -185,7 +261,7 @@ export default function RecentChats(props: any) {
         e.stopPropagation();
         return;
       }
-      if (window.matchMedia('(max-width: 40em)').matches) {
+      if (window.matchMedia('(max-width: 43em)').matches) {
         dispatch(toggleSidebar());
       }
     },
@@ -193,21 +269,50 @@ export default function RecentChats(props: any) {
   );
 
   useEffect(() => {
+    // Identifica el chat seleccionado
+    const selectedChat = recentChats.find(c => c.chatID === currentChatID);
+
+    // Si el chat seleccionado no es el primer elemento de la lista, muévelo al principio
+    if (selectedChat) {
+      const index = recentChats.indexOf(selectedChat);
+      if (index !== 0) {
+        recentChats.splice(index, 1);
+        recentChats.unshift(selectedChat);
+        setSelectedChatIndex(0);
+      } else {
+        setSelectedChatIndex(index);
+      }
+    } else {
+      setSelectedChatIndex(-1);
+    }
     if (currentChatID) {
       const el = document.querySelector(`[data-chat-id="${currentChatID}"]`);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
       }
     }
-  }, [currentChatID]);
+  }, [currentChatID, recentChats]);
+
+  const handleChatSelection = useCallback(
+    (chatID: string, index: number) => {
+      if (chatID === currentChatID) {
+        setSelectedChatIndex(index);
+      } else {
+        setSelectedChatIndex(-1);
+      }
+    },
+    [currentChatID]
+  );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+    setSelectedChatIndex(-1);
     setScrollPosition(0);
   };
 
   const handleClearSearch = () => {
     setSearchQuery('');
+    setSelectedChatIndex(-1);
     setScrollPosition(0);
   };
 
@@ -228,7 +333,7 @@ export default function RecentChats(props: any) {
         style={{ marginTop: '1rem', marginBottom: '1rem' }}
       />
       {searchQuery && (
-        <Button variant="light" onClick={handleClearSearch}>
+        <Button variant="filled" onClick={handleClearSearch}>
           Borrar búsqueda
         </Button>
       )}
@@ -240,6 +345,9 @@ export default function RecentChats(props: any) {
               chat={c}
               onClick={onClick}
               selected={c.chatID === currentChatID}
+              index={index}
+              selectedIndex={selectedChatIndex}
+              onSelect={handleChatSelection}
             />
           ))}
         </ChatList>

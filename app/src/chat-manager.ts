@@ -73,6 +73,22 @@ export class ChatManager extends EventEmitter {
         return id;
     }
 
+    public async updateChatTitle(chatID: string, title: string): Promise<void> {
+        const chat = this.chats.get(chatID);
+    
+        if (!chat || chat.deleted) {
+            throw new Error('Chat no encontrado');
+        }
+    
+        chat.title = title;
+        chat.updated = Date.now();
+    
+        this.emit(chat.id);
+        this.emit('title', chat.id, chat.title);
+        this.emit('update');
+        channel.postMessage({ type: 'chat-update', data: serializeChat(chat) });
+    }    
+
     public async sendMessage(message: UserSubmittedMessage) {
         const chat = this.chats.get(message.chatID);
 

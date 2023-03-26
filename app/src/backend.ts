@@ -65,6 +65,10 @@ export class Backend extends EventEmitter {
         }
     }
 
+    public async updateChatTitle(id: string, title: string) {
+        await this.post(endpoint + '/title', { id, title });
+    }
+
     public async sync() {
         if (!this.isAuthenticated) {
             return;
