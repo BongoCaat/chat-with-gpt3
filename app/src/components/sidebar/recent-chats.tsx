@@ -1,166 +1,257 @@
 import styled from '@emotion/styled';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../context';
 import { useAppDispatch } from '../../store';
 import { toggleSidebar } from '../../store/sidebar';
-import { ActionIcon, Menu } from '@mantine/core';
+import { ActionIcon, Button, Input, Menu } from '@mantine/core';
 import { useModals } from '@mantine/modals';
 import { backend } from '../../backend';
 
 const Container = styled.div`
-    margin: calc(1.618rem - 1rem);
-    margin-top: -0.218rem;
+  margin: calc(1.618rem - 1rem);
+  margin-top: -0.218rem;
 `;
 
 const Empty = styled.p`
-    text-align: center;
-    font-size: 0.8rem;
-    padding: 2rem;
+  text-align: center;
+  font-size: 0.8rem;
+  padding: 2rem;
 `;
 
-const ChatList = styled.div``;
+const ChatList = styled.div`
+  max-height: 46rem;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: gray lightgray;
+
+  &::-webkit-scrollbar {
+    width: 18px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: lightgray;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 20px;
+    border: 3px solid lightgray;
+  }
+`;
 
 const ChatListItemLink = styled(Link)`
+  display: block;
+  position: relative;
+  padding: 0.4rem 1rem;
+  margin: 0.218rem 0;
+  line-height: 1.7;
+  text-decoration: none;
+  border-radius: 0.25rem;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  &.selected {
+    background: #2b3d54;
+  }
+
+  strong {
     display: block;
-    position: relative;
-    padding: 0.4rem 1rem;
-    margin: 0.218rem 0;
-    line-height: 1.7;
-    text-decoration: none;
-    border-radius: 0.25rem;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.6;
+    padding-right: 1rem;
+    color: white;
+  }
 
-    &:hover, &:focus, &:active {
-        background: rgba(0, 0, 0, 0.1);
-    }
+  p {
+    font-size: 0.8rem;
+    font-weight: 200;
+    opacity: 0.8;
+  }
 
-    &.selected {
-        background: #2b3d54;
-    }
-
-    strong {
-        display: block;
-        font-weight: 400;
-        font-size: 1rem;
-        line-height: 1.6;
-        padding-right: 1rem;
-        color: white;
-    }
-
-    p {
-        font-size: 0.8rem;
-        font-weight: 200;
-        opacity: 0.8;
-    }
-
-    .mantine-ActionIcon-root {
-        position: absolute;
-        right: 0.5rem;
-        top: 50%;
-        margin-top: -14px;
-    }
+  .mantine-ActionIcon-root {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    margin-top: -14px;
+  }
 `;
 
-function ChatListItem(props: { chat: any, onClick: any, selected: boolean }) {
-    const c = props.chat;
-    const context = useAppContext();
-    const modals = useModals();
-    const navigate = useNavigate();
+function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
+  const c = props.chat;
+  const context = useAppContext();
+  const modals = useModals();
+  const navigate = useNavigate();
 
-    const onDelete = useCallback(() => {
-        modals.openConfirmModal({
-            title: "Estas seguro de que quieres borrar este chat?",
-            children: <p style={{ lineHeight: 1.7 }}> El chat "{c.title}" va a ser permanentemente borrado. Esto no se puede deshacer.</p>,
+  const onDelete = useCallback(() => {
+    modals.openConfirmModal({
+      title: 'Estas seguro de que quieres borrar este chat?',
+      children: (
+        <p style={{ lineHeight: 1.7 }}>
+          {' '}
+          El chat "{c.title}" va a ser permanentemente borrado. Esto no se puede
+          deshacer.
+        </p>
+      ),
+      labels: {
+        confirm: 'Borrar permanentemente',
+        cancel: 'Cancelar',
+      },
+      confirmProps: {
+        color: 'red',
+      },
+      onConfirm: async () => {
+        try {
+          await backend.current?.deleteChat(c.chatID);
+          context.chat.deleteChat(c.chatID);
+          navigate('/');
+        } catch (e) {
+          console.error(e);
+          modals.openConfirmModal({
+            title: 'Algo salió mal',
+            children: (
+              <p style={{ lineHeight: 1.7 }}>
+                The chat "{c.title}" could not be deleted.
+              </p>
+            ),
             labels: {
-                confirm: "Borrar permanentemente",
-                cancel: "Cancelar",
+              confirm: 'Intenta nuevamente',
+              cancel: 'Cancelar',
             },
-            confirmProps: {
-                color: 'red',
-            },
-            onConfirm: async () => {
-                try {
-                    await backend.current?.deleteChat(c.chatID);
-                    context.chat.deleteChat(c.chatID);
-                    navigate('/');
-                } catch (e) {
-                    console.error(e);
-                    modals.openConfirmModal({
-                        title: "Algo salió mal",
-                        children: <p style={{ lineHeight: 1.7 }}>The chat "{c.title}" could not be deleted.</p>,
-                        labels: {
-                            confirm: "Intenta nuevamente",
-                            cancel: "Cancelar",
-                        },
-                        onConfirm: onDelete,
-                    });
-                }
-            },
-        });
-    }, [c.chatID, c.title]);
+            onConfirm: onDelete,
+          });
+        }
+      },
+    });
+  }, [c.chatID, c.title]);
 
-    return (
-        <ChatListItemLink to={'/chat/' + c.chatID}
-            onClick={props.onClick}
-            data-chat-id={c.chatID}
-            className={props.selected ? 'selected' : ''}>
-            <strong>{c.title || <FormattedMessage defaultMessage={"Untitled"} description="Título predeterminado para sesiones de chat sin título" />}</strong>
-            {props.selected && (
-                <Menu>
-                    <Menu.Target>
-                        <ActionIcon color="green">
-                            <i className="fa fa-bars" style={{ fontSize: '90%' }} />
-                        </ActionIcon>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                        <Menu.Item onClick={onDelete} color="red" icon={<i className="fa fa-trash" />}>
-                            <FormattedMessage defaultMessage={"Borrar este chat"} />
-                        </Menu.Item>
-                    </Menu.Dropdown>
-                </Menu>
-            )}
-        </ChatListItemLink>
-    );
+  return (
+    <ChatListItemLink
+      to={'/chat/' + c.chatID}
+      onClick={props.onClick}
+      data-chat-id={c.chatID}
+      className={props.selected ? 'selected' : ''}
+    >
+      <strong>
+        {c.title || (
+          <FormattedMessage
+            defaultMessage={'Untitled'}
+            description="Título predeterminado para sesiones de chat sin título"
+          />
+        )}
+      </strong>
+      {props.selected && (
+        <Menu>
+          <Menu.Target>
+            <ActionIcon color="green">
+              <i className="fa fa-bars" style={{ fontSize: '90%' }} />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              onClick={onDelete}
+              color="red"
+              icon={<i className="fa fa-trash" />}
+            >
+              <FormattedMessage defaultMessage={'Borrar este chat'} />
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      )}
+    </ChatListItemLink>
+  );
 }
 
 export default function RecentChats(props: any) {
-    const context = useAppContext();
-    const dispatch = useAppDispatch();
+  const context = useAppContext();
+  const dispatch = useAppDispatch();
 
-    const currentChatID = context.currentChat.chat?.id;
-    const recentChats = context.chat.search.query('');
+  const currentChatID = context.currentChat.chat?.id;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [scrollPosition, setScrollPosition] = useState(0);
 
-    const onClick = useCallback((e: React.MouseEvent) => {
-        if (e.currentTarget.closest('button')) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
-        if (window.matchMedia('(max-width: 40em)').matches) {
-            dispatch(toggleSidebar());
-        }
-    }, [dispatch]);
+  const recentChats = context.chat.search.query(searchQuery);
 
-    useEffect(() => {
-        if (currentChatID) {
-            const el = document.querySelector(`[data-chat-id="${currentChatID}"]`);
-            if (el) {
-                el.scrollIntoView();
-            }
-        }
-    }, [currentChatID]);
+  const onClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.currentTarget.closest('button')) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      if (window.matchMedia('(max-width: 40em)').matches) {
+        dispatch(toggleSidebar());
+      }
+    },
+    [dispatch]
+  );
 
-    return (
-        <Container>
-            {recentChats.length > 0 && <ChatList>
-                {recentChats.map(c => (
-                    <ChatListItem key={c.chatID} chat={c} onClick={onClick} selected={c.chatID === currentChatID} />
-                ))}
-            </ChatList>}
-            {recentChats.length === 0 && <Empty>
-                <FormattedMessage defaultMessage={"Aún no hay chats."} description="Mensaje que se muestra en la pantalla Historial de chat para nuevos usuarios que no han iniciado su primera sesión de chat" />
-            </Empty>}
-        </Container>
-    );
+  useEffect(() => {
+    if (currentChatID) {
+      const el = document.querySelector(`[data-chat-id="${currentChatID}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [currentChatID]);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    setScrollPosition(0);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setScrollPosition(0);
+  };
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
+    const isAtBottom = scrollTop + clientHeight === scrollHeight;
+    if (isAtBottom) {
+      // handle reaching bottom of scroll
+    }
+  };
+
+  return (
+    <Container>
+      <Input
+        placeholder="Buscar entre los chats"
+        value={searchQuery}
+        onChange={handleSearchChange}
+        style={{ marginTop: '1rem', marginBottom: '1rem' }}
+      />
+      {searchQuery && (
+        <Button variant="light" onClick={handleClearSearch}>
+          Borrar búsqueda
+        </Button>
+      )}
+      {recentChats.length > 0 && (
+        <ChatList onScroll={handleScroll}>
+          {recentChats.map((c, index) => (
+            <ChatListItem
+              key={c.chatID}
+              chat={c}
+              onClick={onClick}
+              selected={c.chatID === currentChatID}
+            />
+          ))}
+        </ChatList>
+      )}
+      {recentChats.length === 0 && (
+        <Empty>
+          <FormattedMessage
+            defaultMessage={'Aún no hay chats.'}
+            description="Mensaje que se muestra en la pantalla Historial de chat para nuevos usuarios que no han iniciado su primera sesión de chat"
+          />
+        </Empty>
+      )}
+    </Container>
+  );
 }

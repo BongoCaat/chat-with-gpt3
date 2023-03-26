@@ -1,8 +1,8 @@
-# Chat with GPT
+# Chat with GPT || Spanish
 
 Chat with GPT is an open-source, unofficial ChatGPT app with extra features and more ways to customize your experience. It connects ChatGPT with ElevenLabs to give ChatGPT a realistic human voice.
 
-Try out the hosted version at: https://chatwithgpt.netlify.app
+Try out the hosted version at: https://bongpt.netlify.app
 
 Or [self-host with Docker](#running-on-your-own-computer).
 

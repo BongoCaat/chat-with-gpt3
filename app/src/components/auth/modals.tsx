@@ -41,7 +41,7 @@ export function LoginModal(props: any) {
     const onClose = useCallback(() => dispatch(closeModals()), [dispatch]);
     const onCreateAccountClick = useCallback(() => dispatch(openSignupModal()), [dispatch]);
 
-    return <Modal opened={modal === 'login'} onClose={onClose} withCloseButton={false}>
+    return <Modal opened={modal === 'login'} onClose={onClose} withCloseButton={true}>
         <Container action="/chatapi/login" method="post">
             <h2>
                 <FormattedMessage defaultMessage={"Iniciar sesión"} />
@@ -77,7 +77,7 @@ export function CreateAccountModal(props: any) {
     const onClose = useCallback(() => dispatch(closeModals()), [dispatch]);
     const onSignInClick = useCallback(() => dispatch(openLoginModal()), [dispatch]);
 
-    return <Modal opened={modal === 'signup'} onClose={onClose} withCloseButton={false}>
+    return <Modal opened={modal === 'signup'} onClose={onClose} withCloseButton={true}>
         <Container action="/chatapi/register" method="post">
             <h2>
                 <FormattedMessage defaultMessage={"Crea una cuenta"} />

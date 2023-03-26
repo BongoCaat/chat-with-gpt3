@@ -309,7 +309,7 @@ export default function MessageInput(props: MessageInputProps) {
                 onKeyDown={onKeyDown} />
             <div className="bottom">
                 <Center>
-                    <Checkbox size="xs" label="Enter to send" checked={!isEnterToSend} onChange={(v) => setIsEnterToSend(!v.currentTarget.checked)}/>
+                    <Checkbox size="xs" label="Evita el enter para enviar" checked={!isEnterToSend} onChange={(v) => setIsEnterToSend(!v.currentTarget.checked)}/>
                 </Center>
                 <Group my="sm" spacing="xs">
                     <Button variant="subtle"

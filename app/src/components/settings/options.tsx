@@ -21,7 +21,7 @@ export default function GenerationOptionsTab(props: any) {
     const onResetSystemPrompt = useCallback(() => dispatch(resetSystemPrompt()), [dispatch]);
     const onResetModel = useCallback(() => dispatch(resetModel()), [dispatch]);
     const onTemperatureChange = useCallback((value: number) => dispatch(setTemperature(value)), [dispatch]);
-    const resettableSystemPromopt = initialSystemPrompt
+    const resettableSystemPrompt = initialSystemPrompt
         && (initialSystemPrompt?.trim() !== defaultSystemPrompt.trim());
     const resettableModel = model
         && (model?.trim() !== defaultModel.trim());
@@ -38,11 +38,11 @@ export default function GenerationOptionsTab(props: any) {
                 <FormattedMessage defaultMessage="El indicador del sistema se muestra a ChatGPT por el &quot;Sistema&quot; antes de su primer mensaje. La <code>'{{ datetime }}'</code> se reemplaza automáticamente por la fecha y hora actual."
                     values={{ code: chunk => <code style={{ whiteSpace: 'nowrap' }}>{chunk}</code> }} />
             </p>
-            {resettableSystemPromopt && <Button size="xs" compact variant="light" onClick={onResetSystemPrompt}>
+            {resettableSystemPrompt && <Button size="xs" compact variant="light" onClick={onResetSystemPrompt}>
                 <FormattedMessage defaultMessage="Restablecer a lo predeterminado" />
             </Button>}
         </SettingsOption>
-    ), [option, initialSystemPrompt, resettableSystemPromopt, onSystemPromptChange, onResetSystemPrompt]);
+    ), [option, initialSystemPrompt, resettableSystemPrompt, onSystemPromptChange, onResetSystemPrompt]);
     const modelOption = useMemo(() => (
         <SettingsOption heading={intl.formatMessage({ defaultMessage: "Modelo", description: "Dirigirse a la configuración que permite a los usuarios elegir un modelo con el que interactuar, en la pantalla de configuración" })}
                         focused={option === 'model'}>
@@ -51,11 +51,18 @@ export default function GenerationOptionsTab(props: any) {
                 data={[
                     { label: "GPT 3.5 Turbo (Predeterminado)", value: "gpt-3.5-turbo" },
                     { label: "GPT 4 (Requiere Invitación)", value: "gpt-4" },
+                    { label: "GPT 4 32k (Requiere Invitación)", value: "gpt-4-32k" },
                 ]}
                 onChange={onModelChange} />
             {model === 'gpt-4' && (
                 <p style={{ marginBottom: '0.7rem' }}>
                     <FormattedMessage defaultMessage="Nota: GPT-4 solo funcionará si a su cuenta de OpenAI se le ha otorgado acceso al nuevo modelo. <a>Solicita acceso aquí.</a>"
+                        values={{ a: chunk => <a href="https://openai.com/waitlist/gpt-4-api" target="_blank" rel="noreferer">{chunk}</a> }} />
+                </p>
+            )}
+            {model === 'gpt-4-32k' && (
+                <p style={{ marginBottom: '0.7rem' }}>
+                    <FormattedMessage defaultMessage="Nota: GPT-4-32k solo funcionará si a su cuenta de OpenAI se le ha otorgado acceso al nuevo modelo. <a>Solicita acceso aquí.</a>"
                         values={{ a: chunk => <a href="https://openai.com/waitlist/gpt-4-api" target="_blank" rel="noreferer">{chunk}</a> }} />
                 </p>
             )}
@@ -70,7 +77,7 @@ export default function GenerationOptionsTab(props: any) {
             description: "Etiqueta para el botón que abre un modal para configurar la 'temperatura' (aleatoriedad) de las respuestas de IA",
         }, { temperature })}
                         focused={option === 'temperature'}>
-            <Slider value={temperature} onChange={onTemperatureChange} step={0.1} min={0} max={2} precision={3} />
+            <Slider value={temperature} onChange={onTemperatureChange} step={0.1} min={0} max={1} precision={3} />
             <p>
                 <FormattedMessage defaultMessage="El parámetro de temperatura controla la aleatoriedad de las respuestas de la IA. Los valores más bajos harán que la IA sea más predecible, mientras que los valores más altos la harán más creativa." />
             </p>

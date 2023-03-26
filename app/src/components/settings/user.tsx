@@ -30,12 +30,6 @@ export default function UserOptionsTab(props: any) {
                         <FormattedMessage defaultMessage="Encuentre su clave API aquí." description="Etiqueta para el enlace que lleva al usuario a la página del sitio web de OpenAI donde puede encontrar su clave API." />
                     </a>
                 </p>
-
-                <Checkbox
-                    style={{ marginTop: '1rem' }}
-                    id="use-openai-whisper-api" checked={useOpenAIWhisper!} onChange={onUseOpenAIWhisperChange}
-                    label="Utilice la API Whisper de OpenAI para el reconocimiento de voz."
-                />
                 
                 <p>
                     <FormattedMessage defaultMessage="Su clave API se almacena solo en este dispositivo y nunca se transmite a nadie excepto a OpenAI." />
@@ -43,6 +37,13 @@ export default function UserOptionsTab(props: any) {
                 <p>
                     <FormattedMessage defaultMessage="El uso de la clave API de OpenAI se factura a una tarifa de pago por uso, aparte de su suscripción a ChatGPT." />
                 </p>
+
+                <Checkbox
+                    style={{ marginTop: '1rem' }}
+                    id="use-openai-whisper-api" checked={useOpenAIWhisper!} onChange={onUseOpenAIWhisperChange}
+                    label="Utilice la API Whisper de OpenAI para el reconocimiento de voz."
+                />
+
             </SettingsOption>
         </SettingsTab>
     ), [option, openaiApiKey, useOpenAIWhisper, onOpenAIApiKeyChange]);
