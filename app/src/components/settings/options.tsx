@@ -118,13 +118,13 @@ export default function GenerationOptionsTab(props: any) {
                     <input type="text" value={indicator.title} onChange={(event) => editIndicatorTitle(index, event.target.value)} style={{ fontSize: 10 }} />
                 </div>
                 <div style={{ flexGrow: 1, marginLeft: "1rem", marginRight: "1.5rem", marginTop: "0.4rem", marginBottom: "0.4rem" }}>
-                    <Textarea
-                        value={indicator.value}
-                        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => editIndicatorValue(index, event.target.value)}
-                        minRows={1}
-                        maxRows={5}
-                        autosize />
-                </div>
+    <Textarea
+        value={indicator.value}
+        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => editIndicatorValue(index, event.target.value)}
+        style={{ minHeight: "100px", maxHeight: "500px", width: "100%" }}
+    />
+</div>
+
                 {index !== 0 && (
                     <Button size="xs" compact variant="outline" style={{ marginRight: "0.6rem" }} onClick={() => removeIndicator(index)}>
                         <FormattedMessage defaultMessage="Borrar" />
