@@ -141,7 +141,7 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
         }
       },
     });
-  }, [c.chatID, c.title]);
+  }, [c.chatID, c.title, context.chat, modals, navigate]);
 
   const onEditTitle = useCallback(() => {
     setEditingTitle(true);
@@ -169,7 +169,7 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
         onConfirm: onSaveTitle,
       });
     }
-  }, [c.chatID, c.title, newTitle]);  
+  }, [c.chatID, c.title, context.chat, modals, newTitle]);  
 
   const onCancelEditTitle = useCallback(() => {
     setNewTitle(c.title || '');

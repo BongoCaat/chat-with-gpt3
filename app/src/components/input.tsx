@@ -8,7 +8,7 @@ import { useAppContext } from '../context';
 import { useAppDispatch, useAppSelector } from '../store';
 import { selectMessage, setMessage } from '../store/message';
 import { selectTemperature } from '../store/parameters';
-import { openSystemPromptPanel, openTemperaturePanel } from '../store/settings-ui';
+import { openModelPanel, openSystemPromptPanel, openTemperaturePanel } from '../store/settings-ui';
 import { speechRecognition } from '../speech-recognition-types.d'
 import MicRecorder from 'mic-recorder-to-mp3';
 import { selectUseOpenAIWhisper, selectOpenAIApiKey } from '../store/api-keys';
@@ -100,6 +100,7 @@ export default function MessageInput(props: MessageInputProps) {
     const dispatch = useAppDispatch();
     const intl = useIntl();
 
+    const onModelClick = useCallback(() => dispatch(openModelPanel()), [dispatch]);
     const onCustomizeSystemPromptClick = useCallback(() => dispatch(openSystemPromptPanel()), [dispatch]);
     const onTemperatureClick = useCallback(() => dispatch(openTemperaturePanel()), [dispatch]);
     const onChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -309,9 +310,18 @@ export default function MessageInput(props: MessageInputProps) {
                 onKeyDown={onKeyDown} />
             <div className="bottom">
                 <Center>
-                    <Checkbox size="xs" label="Evita el enter para enviar" checked={!isEnterToSend} onChange={(v) => setIsEnterToSend(!v.currentTarget.checked)}/>
+                    <Checkbox size="sm" style= {{ marginTop: '0.3rem', marginBottom: '0.3rem' }} label="Evita el enter para enviar" checked={!isEnterToSend} onChange={(v) => setIsEnterToSend(!v.currentTarget.checked)}/>
                 </Center>
-                <Group my="sm" spacing="xs">
+                <Group my="sm" spacing="md">
+                    <Button variant="subtle"
+                        className="settings-button"
+                        size="xs"
+                        compact
+                        onClick={onModelClick}>
+                        <span>
+                            <FormattedMessage defaultMessage={"Personalizar Modelo"} description="Etiqueta para el botón que abre un modal para personalizar el modelo." />
+                        </span>
+                    </Button>
                     <Button variant="subtle"
                         className="settings-button"
                         size="xs"

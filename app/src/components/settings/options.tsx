@@ -1,12 +1,13 @@
 import SettingsTab from "./tab";
 import SettingsOption from "./option";
 import { Button, Select, Slider, Textarea } from "@mantine/core";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { defaultSystemPrompt, defaultModel } from "../../openai";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { resetModel, setModel, selectModel, resetSystemPrompt, selectSystemPrompt, selectTemperature, setSystemPrompt, setTemperature } from "../../store/parameters";
 import { selectSettingsOption } from "../../store/settings-ui";
 import { FormattedMessage, useIntl } from "react-intl";
+
 export default function GenerationOptionsTab(props: any) {
     const intl = useIntl();
     
@@ -25,24 +26,113 @@ export default function GenerationOptionsTab(props: any) {
         && (initialSystemPrompt?.trim() !== defaultSystemPrompt.trim());
     const resettableModel = model
         && (model?.trim() !== defaultModel.trim());
+
+    const [indicators, setIndicators] = useState(() => {
+        // Leer los indicadores guardados en el localStorage al cargar la página
+        const storedIndicators = localStorage.getItem("indicators");
+        if (storedIndicators) {
+            return JSON.parse(storedIndicators);
+        } else {
+            return [{ title: "Indicador predeterminado", value: defaultSystemPrompt }];
+        }
+    });
+    const [newIndicatorTitle, setNewIndicatorTitle] = useState("");
+    const [newIndicatorValue, setNewIndicatorValue] = useState("");
+
+    useEffect(() => {
+        // Guardar los indicadores en el localStorage cada vez que se actualizan
+        localStorage.setItem("indicators", JSON.stringify(indicators));
+    }, [indicators]);
+
+    const addIndicator = () => {
+        setIndicators([...indicators, { title: newIndicatorTitle, value: newIndicatorValue }]);
+        setNewIndicatorTitle("");
+        setNewIndicatorValue("");
+    };
+
+    const handleUseIndicator = (index: number) => {
+        const indicator = indicators[index];
+        dispatch(setSystemPrompt(indicator.value));
+    };
+    
+    const removeIndicator = (index: number) => {
+        setIndicators(indicators.filter((_, i) => i !== index));
+    };
+
+    const editIndicatorTitle = (index: number, newTitle: string) => {
+        setIndicators(indicators.map((indicator, i) => i === index ? { ...indicator, title: newTitle } : indicator));
+    };
+
+    const editIndicatorValue = (index: number, newValue: string) => {
+        setIndicators(indicators.map((indicator, i) => i === index ? { ...indicator, value: newValue } : indicator));
+    };
+
     const systemPromptOption = useMemo(() => (
         <SettingsOption heading={intl.formatMessage({ defaultMessage: "Indicador del sistema", description: "Dirigirse a la configuración que permite a los usuarios personalizar el indicador del sistema, en la pantalla de configuración" })}
                         focused={option === 'system-prompt'}>
-            <Textarea
-                value={initialSystemPrompt || defaultSystemPrompt}
-                onChange={onSystemPromptChange}
-                minRows={5}
-                maxRows={10}
-                autosize />
-            <p style={{ marginBottom: '0.7rem' }}>
-                <FormattedMessage defaultMessage="El indicador del sistema se muestra a ChatGPT por el &quot;Sistema&quot; antes de su primer mensaje. La <code>'{{ datetime }}'</code> se reemplaza automáticamente por la fecha y hora actual."
-                    values={{ code: chunk => <code style={{ whiteSpace: 'nowrap' }}>{chunk}</code> }} />
-            </p>
-            {resettableSystemPrompt && <Button size="xs" compact variant="light" onClick={onResetSystemPrompt}>
-                <FormattedMessage defaultMessage="Restablecer a lo predeterminado" />
-            </Button>}
+            <div>
+                <Textarea
+                    value={initialSystemPrompt || defaultSystemPrompt}
+                    onChange={onSystemPromptChange}
+                    minRows={5}
+                    maxRows={10}
+                    autosize />
+                <p style={{ marginBottom: '0.7rem' }}>
+                    <FormattedMessage defaultMessage="El indicador del sistema se muestra a ChatGPT por el &quot;Sistema&quot; antes de su primer mensaje. La <code>'{{ datetime }}'</code> se reemplaza automáticamente por la fecha y hora actual."
+                        values={{ code: chunk => <code style={{ whiteSpace: 'nowrap' }}>{chunk}</code> }} />
+                </p>
+                {resettableSystemPrompt && <Button size="xs" compact variant="light" style= {{ marginTop: '0.5rem', marginBottom: '0.5rem' }} onClick={onResetSystemPrompt}>
+                    <FormattedMessage defaultMessage="Restablecer a lo predeterminado" />
+                </Button>}
+            </div>
+            <div style={{ marginTop: "1rem" }}>
+                <Button size="lg" compact variant="outline" onClick={addIndicator}>
+                    <FormattedMessage defaultMessage="Agregar nuevo indicador del sistema:" />
+                </Button>
+                <div style={{ display: "flex", flexDirection: "column", marginBottom: "1rem", marginTop: '1rem' }}>
+                    <label>Título:</label>
+                    <input type="text" style={{ marginBottom: '1rem', marginTop: '1rem' }} value={newIndicatorTitle} onChange={(event) => setNewIndicatorTitle(event.target.value)} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", marginBottom: "1rem", marginTop: '1rem' }}>
+                    <label>Valor:</label>
+                    <Textarea
+                        style= {{ marginBottom: '1rem', marginTop: '1rem' }}
+                        value={newIndicatorValue}
+                        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setNewIndicatorValue(event.target.value)}
+                        minRows={1}
+                        maxRows={5}
+                        autosize />
+                </div>
+                {indicators.length > 1 && (
+                    <div style={{ marginTop: "1rem" }}>
+                        <h4>Indicadores existentes:</h4>
+                        {indicators.map((indicator, index) => (
+                            <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+                                <div style={{ flexGrow: 1 }}>
+                                    <input type="text" value={indicator.title} onChange={(event) => editIndicatorTitle(index, event.target.value)} />
+                                </div>
+                                <div style={{ flexGrow: 1, marginLeft: "1rem", marginRight: "1.5rem", marginTop: "0.4rem", marginBottom: "0.4rem" }}>
+                                    <Textarea
+                                        value={indicator.value}
+                                        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => editIndicatorValue(index, event.target.value)}
+                                        minRows={1}
+                                        maxRows={5}
+                                        autosize />
+                                </div>
+                                <Button size="sm" compact variant="gradient" style= {{ marginRight: "0.6rem" }} onClick={() => removeIndicator(index)}>
+                                    <FormattedMessage defaultMessage="Borrar" />
+                                </Button>
+                                <Button size="sm" compact variant="gradient" style= {{ marginRight: "0.6rem" }} onClick={() => handleUseIndicator(index)}>
+                                    <FormattedMessage defaultMessage="Usar" />
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </SettingsOption>
-    ), [option, initialSystemPrompt, resettableSystemPrompt, onSystemPromptChange, onResetSystemPrompt]);
+    ), [intl, option, initialSystemPrompt, onSystemPromptChange, handleUseIndicator, resettableSystemPrompt, resetSystemPrompt, setSystemPrompt, onResetSystemPrompt, indicators, newIndicatorTitle, newIndicatorValue, addIndicator, removeIndicator, editIndicatorTitle, editIndicatorValue]);
+
     const modelOption = useMemo(() => (
         <SettingsOption heading={intl.formatMessage({ defaultMessage: "Modelo", description: "Dirigirse a la configuración que permite a los usuarios elegir un modelo con el que interactuar, en la pantalla de configuración" })}
                         focused={option === 'model'}>
@@ -66,14 +156,15 @@ export default function GenerationOptionsTab(props: any) {
                         values={{ a: chunk => <a href="https://openai.com/waitlist/gpt-4-api" target="_blank" rel="noreferer">{chunk}</a> }} />
                 </p>
             )}
-            {resettableModel && <Button size="xs" compact variant="light" onClick={onResetModel}>
+            {resettableModel && <Button size="xs" compact variant="light" style= {{ marginTop: '0.5rem', marginBottom: '0.5rem' }} onClick={onResetModel}>
                 <FormattedMessage defaultMessage="Restablecer a lo predeterminado" />
             </Button>}
         </SettingsOption>
-    ), [option, model, resettableModel, onModelChange, onResetModel]);
+    ), [option, model, resetModel, resettableModel, onModelChange, onResetModel]);
+
     const temperatureOption = useMemo(() => (
         <SettingsOption heading={intl.formatMessage({
-            defaultMessage: "Temperatura: {temperature, number, ::.0}", 
+            defaultMessage: "Temperatura: {temperature, number, ::.0}",
             description: "Etiqueta para el botón que abre un modal para configurar la 'temperatura' (aleatoriedad) de las respuestas de IA",
         }, { temperature })}
                         focused={option === 'temperature'}>
@@ -83,6 +174,7 @@ export default function GenerationOptionsTab(props: any) {
             </p>
         </SettingsOption>
     ), [temperature, option, onTemperatureChange]);
+
     const elem = useMemo(() => (
         <SettingsTab name="options">
             {systemPromptOption}
@@ -90,5 +182,6 @@ export default function GenerationOptionsTab(props: any) {
             {temperatureOption}
         </SettingsTab>
     ), [systemPromptOption, modelOption, temperatureOption]);
+
     return elem;
 }
