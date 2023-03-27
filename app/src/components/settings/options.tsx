@@ -10,7 +10,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 
 export default function GenerationOptionsTab(props: any) {
     const intl = useIntl();
-    
+
     const option = useAppSelector(selectSettingsOption);
     const initialSystemPrompt = useAppSelector(selectSystemPrompt);
     const model = useAppSelector(selectModel);
@@ -54,17 +54,23 @@ export default function GenerationOptionsTab(props: any) {
         const indicator = indicators[index];
         dispatch(setSystemPrompt(indicator.value));
     };
-    
+
     const removeIndicator = (index: number) => {
-        setIndicators(indicators.filter((_, i) => i !== index));
+        if (index !== 0) {
+            setIndicators(indicators.filter((_, i) => i !== index));
+        }
     };
 
     const editIndicatorTitle = (index: number, newTitle: string) => {
-        setIndicators(indicators.map((indicator, i) => i === index ? { ...indicator, title: newTitle } : indicator));
+        if (index !== 0) {
+            setIndicators(indicators.map((indicator, i) => i === index ? { ...indicator, title: newTitle } : indicator));
+        }
     };
 
     const editIndicatorValue = (index: number, newValue: string) => {
-        setIndicators(indicators.map((indicator, i) => i === index ? { ...indicator, value: newValue } : indicator));
+        if (index !== 0) {
+            setIndicators(indicators.map((indicator, i) => i === index ? { ...indicator, value: newValue } : indicator));
+        }
     };
 
     const systemPromptOption = useMemo(() => (
@@ -104,31 +110,35 @@ export default function GenerationOptionsTab(props: any) {
                         autosize />
                 </div>
                 {indicators.length > 1 && (
-                    <div style={{ marginTop: "1rem" }}>
-                        <h4>Indicadores existentes:</h4>
-                        {indicators.map((indicator, index) => (
-                            <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
-                                <div style={{ flexGrow: 1 }}>
-                                    <input type="text" value={indicator.title} onChange={(event) => editIndicatorTitle(index, event.target.value)} />
-                                </div>
-                                <div style={{ flexGrow: 1, marginLeft: "1rem", marginRight: "1.5rem", marginTop: "0.4rem", marginBottom: "0.4rem" }}>
-                                    <Textarea
-                                        value={indicator.value}
-                                        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => editIndicatorValue(index, event.target.value)}
-                                        minRows={1}
-                                        maxRows={5}
-                                        autosize />
-                                </div>
-                                <Button size="sm" compact variant="gradient" style= {{ marginRight: "0.6rem" }} onClick={() => removeIndicator(index)}>
-                                    <FormattedMessage defaultMessage="Borrar" />
-                                </Button>
-                                <Button size="sm" compact variant="gradient" style= {{ marginRight: "0.6rem" }} onClick={() => handleUseIndicator(index)}>
-                                    <FormattedMessage defaultMessage="Usar" />
-                                </Button>
-                            </div>
-                        ))}
-                    </div>
+    <div style={{ marginTop: "1rem" }}>
+        <h4>Indicadores existentes:</h4>
+        {indicators.map((indicator, index) => (
+            <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
+                <div style={{ flexGrow: 1 }}>
+                    <input type="text" value={indicator.title} onChange={(event) => editIndicatorTitle(index, event.target.value)} />
+                </div>
+                <div style={{ flexGrow: 1, marginLeft: "1rem", marginRight: "1.5rem", marginTop: "0.4rem", marginBottom: "0.4rem" }}>
+                    <Textarea
+                        value={indicator.value}
+                        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => editIndicatorValue(index, event.target.value)}
+                        minRows={1}
+                        maxRows={5}
+                        autosize />
+                </div>
+                {index !== 0 && (
+                    <>
+                        <Button size="sm" compact variant="gradient" style= {{ marginRight: "0.6rem" }} onClick={() => removeIndicator(index)}>
+                            <FormattedMessage defaultMessage="Borrar" />
+                        </Button>
+                        <Button size="sm" compact variant="gradient" style= {{ marginRight: "0.6rem" }} onClick={() => handleUseIndicator(index)}>
+                            <FormattedMessage defaultMessage="Usar" />
+                        </Button>
+                    </>
                 )}
+            </div>
+        ))}
+    </div>
+)}
             </div>
         </SettingsOption>
     ), [intl, option, initialSystemPrompt, onSystemPromptChange, handleUseIndicator, resettableSystemPrompt, resetSystemPrompt, setSystemPrompt, onResetSystemPrompt, indicators, newIndicatorTitle, newIndicatorValue, addIndicator, removeIndicator, editIndicatorTitle, editIndicatorValue]);
