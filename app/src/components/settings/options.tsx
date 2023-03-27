@@ -115,7 +115,7 @@ export default function GenerationOptionsTab(props: any) {
         {indicators.map((indicator, index) => (
             <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
                 <div style={{ flexGrow: 1 }}>
-                    <input type="text" value={indicator.title} onChange={(event) => editIndicatorTitle(index, event.target.value)} />
+                    <input type="text" value={indicator.title} onChange={(event) => editIndicatorTitle(index, event.target.value)} style={{ fontSize: 10 }} />
                 </div>
                 <div style={{ flexGrow: 1, marginLeft: "1rem", marginRight: "1.5rem", marginTop: "0.4rem", marginBottom: "0.4rem" }}>
                     <Textarea
@@ -125,10 +125,12 @@ export default function GenerationOptionsTab(props: any) {
                         maxRows={5}
                         autosize />
                 </div>
-                <Button size="sm" compact variant="gradient" style= {{ marginRight: "0.6rem" }} onClick={() => removeIndicator(index)}>
-                    <FormattedMessage defaultMessage="Borrar" />
-                </Button>
-                <Button size="sm" compact variant="gradient" style= {{ marginRight: "0.6rem" }} onClick={() => handleUseIndicator(index)}>
+                {index !== 0 && (
+                    <Button size="xs" compact variant="outline" style={{ marginRight: "0.6rem" }} onClick={() => removeIndicator(index)}>
+                        <FormattedMessage defaultMessage="Borrar" />
+                    </Button>
+                )}
+                <Button size="xs" compact variant="outline" style= {{ marginRight: "0.6rem" }} onClick={() => handleUseIndicator(index)}>
                     <FormattedMessage defaultMessage="Usar" />
                 </Button>
             </div>
