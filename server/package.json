@@ -1,7 +1,7 @@
 {
   "name": "chat-with-gpt3",
   "version": "0.2.0",
-  "description": "An open-source ChatGPT app with a voice",
+  "description": "An open-source ChatGPT app",
   "main": "index.js",
   "scripts": {
     "start": "npx ts-node --logError src/index.ts"

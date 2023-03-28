@@ -103,9 +103,9 @@ export default function GenerationOptionsTab(props: any) {
             <div style={{ marginTop: "1rem" }}>
                 <Button size="lg" style= {{ width: '100%' }} compact variant="outline" onClick={addIndicator}>
                     {isMobile ? (
-                        <FormattedMessage defaultMessage="Agregar indicador:" />
+                        <FormattedMessage defaultMessage="Agregar indicador: " />
                     ) : (
-                        <FormattedMessage defaultMessage="Agregar nuevo indicador del sistema:" />
+                        <FormattedMessage defaultMessage="Agregar nuevo indicador del sistema: " />
                     )}
                 </Button>
                 <div style={{ display: "flex", flexDirection: "column", marginBottom: "1rem", marginTop: '1rem' }}>
