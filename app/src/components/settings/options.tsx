@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { resetModel, setModel, selectModel, resetSystemPrompt, selectSystemPrompt, selectTemperature, setSystemPrompt, setTemperature } from "../../store/parameters";
 import { selectSettingsOption } from "../../store/settings-ui";
 import { FormattedMessage, useIntl } from "react-intl";
+import { useMediaQuery } from 'react-responsive';
 
 export default function GenerationOptionsTab(props: any) {
     const intl = useIntl();
@@ -38,6 +39,9 @@ export default function GenerationOptionsTab(props: any) {
     });
     const [newIndicatorTitle, setNewIndicatorTitle] = useState("");
     const [newIndicatorValue, setNewIndicatorValue] = useState("");
+    const [showError, setShowError] = useState(false);
+
+    const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
     useEffect(() => {
         // Guardar los indicadores en el localStorage cada vez que se actualizan
@@ -45,9 +49,14 @@ export default function GenerationOptionsTab(props: any) {
     }, [indicators]);
 
     const addIndicator = () => {
-        setIndicators([...indicators, { title: newIndicatorTitle, value: newIndicatorValue }]);
-        setNewIndicatorTitle("");
-        setNewIndicatorValue("");
+        if (newIndicatorTitle && newIndicatorValue) {
+            setIndicators([...indicators, { title: newIndicatorTitle, value: newIndicatorValue }]);
+            setNewIndicatorTitle("");
+            setNewIndicatorValue("");
+            setShowError(false);
+        } else {
+            setShowError(true);
+        }
     };
 
     const handleUseIndicator = (index: number) => {
@@ -87,59 +96,72 @@ export default function GenerationOptionsTab(props: any) {
                     <FormattedMessage defaultMessage="El indicador del sistema se muestra a ChatGPT por el &quot;Sistema&quot; antes de su primer mensaje. La <code>'{{ datetime }}'</code> se reemplaza automáticamente por la fecha y hora actual."
                         values={{ code: chunk => <code style={{ whiteSpace: 'nowrap' }}>{chunk}</code> }} />
                 </p>
-                {resettableSystemPrompt && <Button size="xs" compact variant="light" style= {{ marginTop: '0.5rem', marginBottom: '0.5rem' }} onClick={onResetSystemPrompt}>
+                {resettableSystemPrompt && <Button size="sm" compact variant="filled" style= {{ marginTop: '0.5rem', marginBottom: '0.5rem' }} onClick={onResetSystemPrompt}>
                     <FormattedMessage defaultMessage="Restablecer a lo predeterminado" />
                 </Button>}
             </div>
             <div style={{ marginTop: "1rem" }}>
-                <Button size="lg" compact variant="outline" onClick={addIndicator}>
-                    <FormattedMessage defaultMessage="Agregar nuevo indicador del sistema:" />
+                <Button size="lg" style= {{ width: '100%' }} compact variant="outline" onClick={addIndicator}>
+                    {isMobile ? (
+                        <FormattedMessage defaultMessage="Agregar indicador:" />
+                    ) : (
+                        <FormattedMessage defaultMessage="Agregar nuevo indicador del sistema:" />
+                    )}
                 </Button>
                 <div style={{ display: "flex", flexDirection: "column", marginBottom: "1rem", marginTop: '1rem' }}>
                     <label>Título:</label>
-                    <input type="text" style={{ marginBottom: '1rem', marginTop: '1rem' }} value={newIndicatorTitle} onChange={(event) => setNewIndicatorTitle(event.target.value)} />
+                    <input type="text" style={{ marginBottom: '1rem', marginTop: '1rem' }} value={newIndicatorTitle} onChange={(event) => {
+                        setNewIndicatorTitle(event.target.value);
+                        setShowError(event.target.value === "" && newIndicatorValue === "");
+                    }} />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", marginBottom: "1rem", marginTop: '1rem' }}>
                     <label>Valor:</label>
                     <Textarea
                         style= {{ marginBottom: '1rem', marginTop: '1rem' }}
                         value={newIndicatorValue}
-                        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setNewIndicatorValue(event.target.value)}
+                        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                            setNewIndicatorValue(event.target.value);
+                            setShowError(event.target.value === "" && newIndicatorTitle === "");
+                        }}
                         minRows={1}
                         maxRows={5}
                         autosize />
                 </div>
+                {showError && <p style={{ color: "red" }}>El título y el valor son obligatorios</p>}
                 {indicators.length > 1 && (
-    <div style={{ marginTop: "1rem" }}>
-        <h4>Indicadores existentes:</h4>
+    <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+        <h4>Indicadores del sistema existentes:</h4>
         {indicators.map((indicator, index) => (
-            <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "0.5rem" }}>
-                <div style={{ flexGrow: 1 }}>
-                    <input type="text" value={indicator.title} onChange={(event) => editIndicatorTitle(index, event.target.value)} style={{ fontSize: 11, marginRight: "1rem" }} />
+            <div key={index} style={{ display: "flex", alignItems: "center", marginTop: "0.7rem", marginBottom: "0.5rem" }}>
+                <div style={{ flexGrow: 0.135 }}>
+                    <input type="text" value={indicator.title} onChange={(event) => editIndicatorTitle(index, event.target.value)} style={{ minHeight: "30px", maxHeight: "10px", width: "111px" }} />
                 </div>
-                <div style={{ flexGrow: 1, marginLeft: "1rem", marginRight: "1.5rem", marginTop: "0.4rem", marginBottom: "0.4rem" }}>
+                <div style={{ flexGrow: 1, marginLeft: "0.5rem", marginTop: "0.3rem", marginBottom: "0.45rem" }}>
     <Textarea
         value={indicator.value}
         onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => editIndicatorValue(index, event.target.value)}
-        style={{ minHeight: "100px", maxHeight: "500px", width: "100%" }}
+        style={{ minHeight: "50px", maxHeight: "150px", width: "100%" }}
     />
 </div>
 
-                {index !== 0 && (
-                    <Button size="xs" compact variant="outline" style={{ marginRight: "0.6rem" }} onClick={() => removeIndicator(index)}>
-                        <FormattedMessage defaultMessage="Borrar" />
-                    </Button>
-                )}
-                <Button size="xs" compact variant="outline" style= {{ marginRight: "0.6rem" }} onClick={() => handleUseIndicator(index)}>
-                    <FormattedMessage defaultMessage="Usar" />
-                </Button>
+<div style={{ display: "flex", flexDirection: "column" }}>
+  {index !== 0 && (
+    <Button size="sm" compact variant="outline" style={{ marginBottom: "0.75", marginRight: "0.55rem", marginLeft: "0.55rem" }} onClick={() => removeIndicator(index)}>
+      <FormattedMessage defaultMessage="Borrar" />
+    </Button>
+  )}
+  <Button size="sm" compact variant="outline" style={{ marginTop: "0.75rem", marginRight: "0.55rem", marginLeft: "0.55rem" }} onClick={() => handleUseIndicator(index)}>
+    <FormattedMessage defaultMessage="Usar" />
+  </Button>
+</div>
             </div>
         ))}
     </div>
 )}
             </div>
         </SettingsOption>
-    ), [intl, option, initialSystemPrompt, onSystemPromptChange, handleUseIndicator, resettableSystemPrompt, resetSystemPrompt, setSystemPrompt, onResetSystemPrompt, indicators, newIndicatorTitle, newIndicatorValue, addIndicator, removeIndicator, editIndicatorTitle, editIndicatorValue]);
+    ), [intl, option, initialSystemPrompt, onSystemPromptChange, handleUseIndicator, newIndicatorTitle, newIndicatorValue, resettableSystemPrompt, resetSystemPrompt, setSystemPrompt, onResetSystemPrompt, indicators, newIndicatorTitle, newIndicatorValue, addIndicator, removeIndicator, editIndicatorTitle, editIndicatorValue]);
 
     const modelOption = useMemo(() => (
         <SettingsOption heading={intl.formatMessage({ defaultMessage: "Modelo", description: "Dirigirse a la configuración que permite a los usuarios elegir un modelo con el que interactuar, en la pantalla de configuración" })}

@@ -315,16 +315,16 @@ export default function MessageInput(props: MessageInputProps) {
                 <Group my="sm" spacing="md">
                     <Button variant="subtle"
                         className="settings-button"
-                        size="xs"
+                        size="sm"
                         compact
                         onClick={onModelClick}>
                         <span>
-                            <FormattedMessage defaultMessage={"Personalizar Modelo"} description="Etiqueta para el botón que abre un modal para personalizar el modelo." />
+                            <FormattedMessage defaultMessage={"Personalizar modelo"} description="Etiqueta para el botón que abre un modal para personalizar el modelo." />
                         </span>
                     </Button>
                     <Button variant="subtle"
                         className="settings-button"
-                        size="xs"
+                        size="sm"
                         compact
                         onClick={onCustomizeSystemPromptClick}>
                         <span>
@@ -333,7 +333,7 @@ export default function MessageInput(props: MessageInputProps) {
                     </Button>
                     <Button variant="subtle"
                         className="settings-button"
-                        size="xs"
+                        size="sm"
                         compact
                         onClick={onTemperatureClick}>
                         <span>
