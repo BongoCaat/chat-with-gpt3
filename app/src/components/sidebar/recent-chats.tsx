@@ -24,20 +24,21 @@ const ChatList = styled.div`
   max-height: 46rem;
   overflow-y: scroll;
   scrollbar-width: thin;
-  scrollbar-color: gray lightgray;
+  scrollbar-color: #555555 #f5f5f5;
 
   &::-webkit-scrollbar {
-    width: 18px;
+    width: 15px;
   }
 
   &::-webkit-scrollbar-track {
-    background: lightgray;
+    background: #f5f5f5;
+    border-radius: 10px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: gray;
-    border-radius: 20px;
-    border: 3px solid lightgray;
+    background-color: #555555;
+    border-radius: 10px;
+    border: 3px solid #f5f5f5;
   }
 `;
 
@@ -49,6 +50,7 @@ const ChatListItemLink = styled(Link)`
   line-height: 1.7;
   text-decoration: none;
   border-radius: 0.25rem;
+  pointer-events: auto;
 
   &:hover,
   &:focus,
@@ -80,6 +82,7 @@ const ChatListItemLink = styled(Link)`
     right: 0.5rem;
     top: 50%;
     margin-top: -14px;
+    pointer-events: auto;
   }
 `;
 
@@ -94,7 +97,7 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
   useEffect(() => {
     setNewTitle(c.title || '');
   }, [c.title]);
-  
+
   useEffect(() => {
     if (!editingTitle && newTitle !== c.title) {
       setNewTitle(c.title || '');
@@ -169,7 +172,7 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
         onConfirm: onSaveTitle,
       });
     }
-  }, [c.chatID, c.title, context.chat, modals, newTitle]);  
+  }, [c.chatID, c.title, context.chat, modals, newTitle]);
 
   const onCancelEditTitle = useCallback(() => {
     setNewTitle(c.title || '');
@@ -250,29 +253,39 @@ export default function RecentChats(props: any) {
   const currentChatID = context.currentChat.chat?.id;
   const [searchQuery, setSearchQuery] = useState('');
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 41 * 16);
 
   const recentChats = context.chat.search.query(searchQuery);
   const [selectedChatIndex, setSelectedChatIndex] = useState(-1);
 
   const onClick = useCallback(
-    (e: React.MouseEvent) => {
+    (e) => {
       if (e.currentTarget.closest('button')) {
         e.preventDefault();
         e.stopPropagation();
         return;
       }
-      if (window.matchMedia('(max-width: 43em)').matches) {
+      if (isMobile) {
         dispatch(toggleSidebar());
       }
     },
-    [dispatch]
+    [dispatch, isMobile]
   );
 
   useEffect(() => {
-    // Identifica el chat seleccionado
-    const selectedChat = recentChats.find(c => c.chatID === currentChatID);
+    const handleWindowResize = () => {
+      setIsMobile(window.innerWidth <= 43 * 16);
+    };
 
-    // Si el chat seleccionado no es el primer elemento de la lista, muévelo al principio
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    const selectedChat = recentChats.find((c) => c.chatID === currentChatID);
+
     if (selectedChat) {
       const index = recentChats.indexOf(selectedChat);
       if (index !== 0) {
@@ -341,13 +354,13 @@ export default function RecentChats(props: any) {
         <ChatList onScroll={handleScroll}>
           {recentChats.map((c, index) => (
             <ChatListItem
-              key={c.chatID}
-              chat={c}
-              onClick={onClick}
-              selected={c.chatID === currentChatID}
-              index={index}
-              selectedIndex={selectedChatIndex}
-              onSelect={handleChatSelection}
+                key={c.chatID}
+                chat={c}
+                onClick={onClick}
+                selected={c.chatID === currentChatID}
+                index={index}
+                selectedIndex={selectedChatIndex}
+                onSelect={handleChatSelection}
             />
           ))}
         </ChatList>
