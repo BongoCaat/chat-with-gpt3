@@ -4,12 +4,6 @@ This project is forked from [Chat with GPT](https://github.com/cogentapps/chat-w
 
 Try out the hosted version at: https://bongpt.netlify.app
 
-Or [self-host with Docker](#running-on-your-own-computer).
-
-Powered by the new ChatGPT API from OpenAI, this app has been developed using TypeScript + React. We welcome pull requests from the community!
-
-https://user-images.githubusercontent.com/127109874/223613258-0c4fef2e-1d05-43a1-ac38-e972dafc2f98.mp4
-
 ## Features
 
 - 🚀 **Fast** response times.
@@ -25,8 +19,6 @@ https://user-images.githubusercontent.com/127109874/223613258-0c4fef2e-1d05-43a1
 - 🫰 Pay for only what you use with the ChatGPT API.
 - And more!!!
 
-## Bring your own API keys
-
 ### OpenAI
 
 To get started with Chat with GPT, you will need to add your OpenAI API key on the settings screen. Click "Connect your OpenAI account to get started" on the home page to begin. Once you have added your API key, you can start chatting with ChatGPT.
@@ -38,16 +30,6 @@ Your API key is stored only on your device and is never transmitted to anyone ex
 To use the realistic AI text-to-speech feature, you will need to add your ElevenLabs API key by clicking "Play" next to any message.
 
 Your API key is stored only on your device and never transmitted to anyone except ElevenLabs.
-
-## Running on your own computer
-
-To run on your own device, you can use Docker:
-
-```
-docker run -v $(pwd)/data:/app/data -p 3000:3000 ghcr.io/cogentapps/chat-with-gpt:release
-```
-
-Then navigate to http://localhost:3000 to view the app.
 
 ## License
 
