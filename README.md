@@ -1,6 +1,6 @@
 # Chat with GPT || Spanish
 
-Chat with GPT is an open-source, unofficial ChatGPT app with extra features and more ways to customize your experience. It connects ChatGPT with ElevenLabs to give ChatGPT a realistic human voice.
+This project is forked from [Chat with GPT](https://github.com/cogentapps/chat-with-gpt)
 
 Try out the hosted version at: https://bongpt.netlify.app
 
@@ -23,6 +23,7 @@ https://user-images.githubusercontent.com/127109874/223613258-0c4fef2e-1d05-43a1
 - 🔁 Regenerate ChatGPT messages
 - 🖼 **Full markdown support** including code, tables, and math.
 - 🫰 Pay for only what you use with the ChatGPT API.
+- And more!!!
 
 ## Bring your own API keys
 
