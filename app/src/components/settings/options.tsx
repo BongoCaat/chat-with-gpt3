@@ -1,6 +1,6 @@
 import SettingsTab from "./tab";
 import SettingsOption from "./option";
-import { Button, Select, Slider, Textarea } from "@mantine/core";
+import { Modal, Button, Select, Slider, Textarea } from "@mantine/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { defaultSystemPrompt, defaultModel } from "../../openai";
 import { useAppDispatch, useAppSelector } from "../../store";
@@ -8,6 +8,38 @@ import { resetModel, setModel, selectModel, resetSystemPrompt, selectSystemPromp
 import { selectSettingsOption } from "../../store/settings-ui";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useMediaQuery } from 'react-responsive';
+
+interface ConfirmationModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: (index: number) => void;
+    index: number;
+    title: string;
+}
+
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, index, title }: ConfirmationModalProps) => {
+    return (
+      <Modal
+        opened={isOpen}
+        onClose={onClose}
+        title={`Confirmar eliminación de indicador "${title}"`}
+        size="sm"
+        style={{ borderRadius: "8px" }}
+      >
+        <div style={{ display: "flex", marginBottom: "1.3rem" }}>
+            <p style={{ marginBottom: '15px', marginRight: '20px' }}>¿Estás seguro de que deseas eliminar el indicador "{title}"?</p>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button variant="light" onClick={onClose} style={{ marginRight: "1.1rem" }}>
+            Cancelar
+          </Button>
+          <Button variant="filled" color="red" onClick={() => onConfirm(index)}>
+            Eliminar
+          </Button>
+        </div>
+      </Modal>
+    );
+};
 
 export default function GenerationOptionsTab(props: any) {
     const intl = useIntl();
@@ -29,7 +61,6 @@ export default function GenerationOptionsTab(props: any) {
         && (model?.trim() !== defaultModel.trim());
 
     const [indicators, setIndicators] = useState(() => {
-        // Leer los indicadores guardados en el localStorage al cargar la página
         const storedIndicators = localStorage.getItem("indicators");
         if (storedIndicators) {
             return JSON.parse(storedIndicators);
@@ -39,12 +70,14 @@ export default function GenerationOptionsTab(props: any) {
     });
     const [newIndicatorTitle, setNewIndicatorTitle] = useState("");
     const [newIndicatorValue, setNewIndicatorValue] = useState("");
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+    const [indicatorToDelete, setIndicatorToDelete] = useState(-1);
+    const [confirmationModalTitle, setConfirmationModalTitle] = useState("");
     const [showError, setShowError] = useState(false);
 
     const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
     useEffect(() => {
-        // Guardar los indicadores en el localStorage cada vez que se actualizan
         localStorage.setItem("indicators", JSON.stringify(indicators));
     }, [indicators]);
 
@@ -59,6 +92,17 @@ export default function GenerationOptionsTab(props: any) {
         }
     };
 
+    const openConfirmationModal = (index: number) => {
+        setIndicatorToDelete(index);
+        setIsConfirmationModalOpen(true);
+        const title = indicators[index].title;
+        setConfirmationModalTitle(title);
+    };
+    
+    const closeConfirmationModal = () => {
+        setIsConfirmationModalOpen(false);
+    };
+
     const handleUseIndicator = (index: number) => {
         const indicator = indicators[index];
         dispatch(setSystemPrompt(indicator.value));
@@ -66,7 +110,10 @@ export default function GenerationOptionsTab(props: any) {
 
     const removeIndicator = (index: number) => {
         if (index !== 0) {
-            setIndicators(indicators.filter((_, i) => i !== index));
+            const newIndicators = [...indicators];
+            newIndicators.splice(index, 1);
+            setIndicators(newIndicators);
+            setIsConfirmationModalOpen(false);
         }
     };
 
@@ -134,7 +181,7 @@ export default function GenerationOptionsTab(props: any) {
         <h4>Indicadores del sistema existentes:</h4>
         {indicators.map((indicator, index) => (
             <div key={index} style={{ display: "flex", alignItems: "center", marginTop: "0.7rem", marginBottom: "0.5rem" }}>
-                <div style={{ flexGrow: 0.135 }}>
+                <div style={{ flexGrow: 0.045 }}>
                     <input type="text" value={indicator.title} onChange={(event) => editIndicatorTitle(index, event.target.value)} style={{ minHeight: "30px", maxHeight: "10px", width: "111px" }} />
                 </div>
                 <div style={{ flexGrow: 1, marginLeft: "0.5rem", marginTop: "0.3rem", marginBottom: "0.45rem" }}>
@@ -146,11 +193,20 @@ export default function GenerationOptionsTab(props: any) {
 </div>
 
 <div style={{ display: "flex", flexDirection: "column" }}>
-  {index !== 0 && (
-    <Button size="sm" compact variant="outline" style={{ marginBottom: "0.75", marginRight: "0.55rem", marginLeft: "0.55rem" }} onClick={() => removeIndicator(index)}>
-      <FormattedMessage defaultMessage="Borrar" />
-    </Button>
-  )}
+{index !== 0 && (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+                <Button size="sm" compact variant="outline" style={{ marginBottom: "0.75", marginRight: "0.55rem", marginLeft: "0.55rem" }} onClick={() => openConfirmationModal(index)}>
+                    <FormattedMessage defaultMessage="Borrar" />
+                </Button>
+                <ConfirmationModal
+                    isOpen={isConfirmationModalOpen}
+                    onClose={closeConfirmationModal}
+                    onConfirm={removeIndicator}
+                    index={indicatorToDelete}
+                    title={confirmationModalTitle}
+                />
+            </div>
+        )}
   <Button size="sm" compact variant="outline" style={{ marginTop: "0.75rem", marginRight: "0.55rem", marginLeft: "0.55rem" }} onClick={() => handleUseIndicator(index)}>
     <FormattedMessage defaultMessage="Usar" />
   </Button>
@@ -161,7 +217,7 @@ export default function GenerationOptionsTab(props: any) {
 )}
             </div>
         </SettingsOption>
-    ), [intl, option, initialSystemPrompt, onSystemPromptChange, handleUseIndicator, newIndicatorTitle, newIndicatorValue, resettableSystemPrompt, resetSystemPrompt, setSystemPrompt, onResetSystemPrompt, indicators, newIndicatorTitle, newIndicatorValue, addIndicator, removeIndicator, editIndicatorTitle, editIndicatorValue]);
+    ), [intl, option, initialSystemPrompt, onSystemPromptChange, handleUseIndicator, indicatorToDelete, showError, isMobile, openConfirmationModal, isConfirmationModalOpen, newIndicatorTitle, newIndicatorValue, resettableSystemPrompt, resetSystemPrompt, setSystemPrompt, onResetSystemPrompt, indicators, newIndicatorTitle, newIndicatorValue, addIndicator, removeIndicator, editIndicatorTitle, editIndicatorValue]);
 
     const modelOption = useMemo(() => (
         <SettingsOption heading={intl.formatMessage({ defaultMessage: "Modelo", description: "Dirigirse a la configuración que permite a los usuarios elegir un modelo con el que interactuar, en la pantalla de configuración" })}
