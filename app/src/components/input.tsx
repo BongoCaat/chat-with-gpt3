@@ -33,7 +33,7 @@ const Container = styled.div`
         display: flex;
         justify-content: space-between;
     }
-    @media (max-width: 320px) {
+    @media (max-width: 305px) {
         .inner > .bottom {
             flex-direction: column;
             align-items: flex-start;
@@ -311,7 +311,7 @@ export default function MessageInput(props: MessageInputProps) {
                 onKeyDown={onKeyDown} />
             <div className="bottom">
                 <Center>
-                    <Checkbox size="sm" style= {{ marginTop: '0.3rem', marginBottom: '0.3rem', marginRight: '0.15srem' }} label="Evita el enter para enviar" checked={!isEnterToSend} onChange={(v) => setIsEnterToSend(!v.currentTarget.checked)}/>
+                    <Checkbox size="sm" style= {{ marginTop: '0.3rem', marginBottom: '0.3rem', marginRight: '0.15srem' }} label="Enter no envía" checked={!isEnterToSend} onChange={(v) => setIsEnterToSend(!v.currentTarget.checked)}/>
                 </Center>
                 <Group my="sm" spacing="md">
                 {!isMobile && (

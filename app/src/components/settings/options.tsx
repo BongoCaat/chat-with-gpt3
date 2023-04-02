@@ -22,12 +22,12 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, index, title }: Confirm
       <Modal
         opened={isOpen}
         onClose={onClose}
-        title={`Confirmar eliminación de indicador "${title}"`}
+        title={`Confirmar eliminación de indicador`}
         size="sm"
         style={{ borderRadius: "8px" }}
       >
         <div style={{ display: "flex", marginBottom: "1.3rem" }}>
-            <p style={{ marginBottom: '15px', marginRight: '20px' }}>¿Estás seguro de que deseas eliminar el indicador "{title}"?</p>
+            <p style={{ marginBottom: '15px', marginRight: '20px' }}>¿Estás seguro de que deseas eliminar el indicador  "{title}"  ?</p>
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button variant="light" onClick={onClose} style={{ marginRight: "1.1rem" }}>
