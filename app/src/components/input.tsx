@@ -21,22 +21,27 @@ const Container = styled.div`
     border-top: thin solid #393933;
     padding: 1rem 1rem 0 1rem;
     .inner {
-        max-width: 50rem;
+        max-width: 52rem;
         margin: auto;
         text-align: right;
     }
     .settings-button {
         font-size: 0.7rem;
+        zIndex: 9999;
         color: #999;
     }
     .inner > .bottom {
         display: flex;
         justify-content: space-between;
     }
-    @media (max-width: 600px) {
+    @media (max-width: 650px) {
         .inner > .bottom {
-            flex-direction: column;
-            align-items: flex-start;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .inner > .bottom > div:first-of-type {
+          margin-bottom: 0.5rem;
         }
     }
 `;
@@ -310,18 +315,9 @@ export default function MessageInput(props: MessageInputProps) {
                 onKeyDown={onKeyDown} />
             <div className="bottom">
                 <Center>
-                    <Checkbox size="sm" style= {{ marginTop: '0.3rem', marginBottom: '0.3rem' }} label="Evita el enter para enviar" checked={!isEnterToSend} onChange={(v) => setIsEnterToSend(!v.currentTarget.checked)}/>
+                    <Checkbox size="sm" style= {{ marginTop: '0.3rem', marginBottom: '0.3rem', marginRight: '0.15srem' }} label="Evita el enter para enviar" checked={!isEnterToSend} onChange={(v) => setIsEnterToSend(!v.currentTarget.checked)}/>
                 </Center>
                 <Group my="sm" spacing="md">
-                    <Button variant="subtle"
-                        className="settings-button"
-                        size="sm"
-                        compact
-                        onClick={onModelClick}>
-                        <span>
-                            <FormattedMessage defaultMessage={"Personalizar modelo"} description="Etiqueta para el botón que abre un modal para personalizar el modelo." />
-                        </span>
-                    </Button>
                     <Button variant="subtle"
                         className="settings-button"
                         size="sm"
@@ -329,6 +325,15 @@ export default function MessageInput(props: MessageInputProps) {
                         onClick={onCustomizeSystemPromptClick}>
                         <span>
                             <FormattedMessage defaultMessage={"Personalizar aviso del sistema"} description="Etiqueta para el botón que abre un modal para personalizar el 'mensaje del sistema', un mensaje que se usa para personalizar e influir en cómo responde la IA." />
+                        </span>
+                    </Button>
+                    <Button variant="subtle"
+                        className="settings-button"
+                        size="sm"
+                        compact
+                        onClick={onModelClick}>
+                        <span>
+                            <FormattedMessage defaultMessage={"Personalizar modelo"} description="Etiqueta para el botón que abre un modal para personalizar el modelo." />
                         </span>
                     </Button>
                     <Button variant="subtle"

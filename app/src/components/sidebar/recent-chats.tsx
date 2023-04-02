@@ -8,6 +8,8 @@ import { toggleSidebar } from '../../store/sidebar';
 import { ActionIcon, Button, Input, Menu } from '@mantine/core';
 import { useModals } from '@mantine/modals';
 import { backend } from '../../backend';
+import { FaSave, FaTimes } from 'react-icons/fa';
+import { debounce } from 'lodash';
 
 const Container = styled.div`
   margin: calc(1.2rem - 0.8rem);
@@ -17,7 +19,7 @@ const Container = styled.div`
 
 const Empty = styled.p`
   text-align: center;
-  font-size: 0.6rem;
+  font-size: 1.2rem;
   padding: 1rem;
 `;
 
@@ -102,9 +104,21 @@ const ChatListItemLink = styled(Link)`
     }
   }
 
-  @media (min-width: 768px) {
+  @media (max-width: 768px) {
     * {
       touch-action: manipulation;
+    }
+  }
+
+  .cancel-save-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media (max-width: 768px) {
+    .cancel-save-buttons {
+      flex-direction: row;
+      align-items: center;
     }
   }
 `;
@@ -118,8 +132,20 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
   const [newTitle, setNewTitle] = useState(c.title || '');
   const [isSavingTitle, setIsSavingTitle] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
-  const isEven = props.index % 2 === 0;
+  const [showIcons, setShowIcons] = useState(false);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setShowIcons(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     setNewTitle(c.title || '');
@@ -136,45 +162,43 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
   }, [c.title, editingTitle, newTitle]);
 
   const onDelete = useCallback(() => {
-    setTimeout(() => {
-      modals.openConfirmModal({
-        title: 'Estas seguro de que quieres borrar este chat?',
-        children: (
-          <p style={{ lineHeight: 1.7 }}>
-            El chat "{c.title}" va a ser permanentemente borrado. Esto no se puede deshacer.
-          </p>
-        ),
-        labels: {
-          confirm: 'Borrar permanentemente',
-          cancel: 'Cancelar',
-        },
-        confirmProps: {
-          color: 'red',
-        },
-        onConfirm: async () => {
-          try {
-            await backend.current?.deleteChat(c.chatID);
-            context.chat.deleteChat(c.chatID);
-            navigate('/');
-          } catch (e) {
-            console.error(e);
-            modals.openConfirmModal({
-              title: 'Algo salió mal',
-              children: (
-                <p style={{ lineHeight: 1.7 }}>
-                  El chat "{c.title}" no pudo ser borrado.
-                </p>
-              ),
-              labels: {
-                confirm: 'Intenta nuevamente',
-                cancel: 'Cancelar',
-              },
-              onConfirm: onDelete,
-            });
-          }
-        },
-      });
-    }, 57);
+    modals.openConfirmModal({
+      title: 'Estas seguro de que quieres borrar este chat?',
+      children: (
+        <p style={{ lineHeight: 1.7 }}>
+          El chat "{c.title}" va a ser permanentemente borrado. Esto no se puede deshacer.
+        </p>
+      ),
+      labels: {
+        confirm: 'Borrar permanentemente',
+        cancel: 'Cancelar',
+      },
+      confirmProps: {
+        color: 'red',
+      },
+      onConfirm: async () => {
+        try {
+          await backend.current?.deleteChat(c.chatID);
+          context.chat.deleteChat(c.chatID);
+          navigate('/');
+        } catch (e) {
+          console.error(e);
+          modals.openConfirmModal({
+            title: 'Algo salió mal',
+            children: (
+              <p style={{ lineHeight: 1.7 }}>
+                El chat "{c.title}" no pudo ser borrado.
+              </p>
+            ),
+            labels: {
+              confirm: 'Intenta nuevamente',
+              cancel: 'Cancelar',
+            },
+            onConfirm: onDelete,
+          });
+        }
+      },
+    });
   }, [c.chatID, c.title, context.chat, modals, navigate]);
 
   const onEditTitle = useCallback(() => {
@@ -237,6 +261,14 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
     }
   }, [isCancelling]);
 
+  const onDeleteWithDelay = useCallback(() => {
+    setTimeout(() => {
+      onDelete();
+    }, 350);
+  }, [onDelete]);
+
+  const debouncedDelete = debounce(onDeleteWithDelay, 500, { leading: true, trailing: false });
+
   return (
     <ChatListItemLink
       to={'/chat/' + c.chatID}
@@ -267,14 +299,14 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
         <Menu>
           <Menu.Target>
             <ActionIcon type="button" onClick={(e) => { e.stopPropagation(); e.preventDefault(); }} onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); }}>
-              <i className="fa fa-bars" style={{ fontSize: '82%' }} />
+              <i className="fa fa-bars" style={{ fontSize: '83%' }} />
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown style={{ zIndex: 9999, position: 'fixed', top: 'auto', right: 'auto', left: 'auto', bottom: 'auto' }}>
             <Menu.Item onClick={(e) => { e.stopPropagation(); e.preventDefault(); onEditTitle(); }} onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); onEditTitle(); }} color="green" icon={<i className="fa fa-edit" />}>
               <FormattedMessage defaultMessage={'Editar título'} />
             </Menu.Item>
-            <Menu.Item onClick={(e) => { e.stopPropagation(); e.preventDefault(); onDelete(); }} onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); onDelete(); }} color="red" icon={<i className="fa fa-trash" />}>
+            <Menu.Item onClick={(e) => { e.stopPropagation(); e.preventDefault(); debouncedDelete(); }} onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); debouncedDelete(); }} color="red" icon={<i className="fa fa-trash" />}>
               <FormattedMessage defaultMessage={'Borrar este chat'} />
             </Menu.Item>
           </Menu.Dropdown>
@@ -282,23 +314,27 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
       )}
       {editingTitle && (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div className={`cancel-save-buttons ${showIcons ? 'show-icons' : ''}`}>
           <Button
             variant="outline"
+            className="cancel-button"
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleCancelClick(onCancelEditTitle)}}
             onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); handleCancelClick(onCancelEditTitle)}}
             style={{ marginRight: '1.0rem' }}
           >
-            {isCancelling ? 'Cancelando...' : 'Cancelar'}
+            {showIcons ? <FaTimes /> : isCancelling ? 'Cancelando...' : 'Cancelar'}
           </Button>
           <Button
             variant="outline"
+            className="save-button"
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleSaveClick(onSaveTitle)}}
             onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); handleSaveClick(onSaveTitle)}}
             style={{ marginRight: '2.0rem' }}
           >
-            {isSavingTitle && !isCancelling ? 'Guardando...' : 'Guardar'}
+            {showIcons ? <FaSave /> : isSavingTitle && !isCancelling ? 'Guardando...' : 'Guardar'}
           </Button>
         </div>
+      </div>
       )}
     </ChatListItemLink>
   );

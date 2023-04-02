@@ -249,17 +249,31 @@ export default function GenerationOptionsTab(props: any) {
     ), [option, model, resetModel, resettableModel, onModelChange, onResetModel]);
 
     const temperatureOption = useMemo(() => (
-        <SettingsOption heading={intl.formatMessage({
+        <SettingsOption
+          heading={intl.formatMessage({
             defaultMessage: "Temperatura: {temperature, number, ::.0}",
-            description: "Etiqueta para el botón que abre un modal para configurar la 'temperatura' (aleatoriedad) de las respuestas de IA",
-        }, { temperature })}
-                        focused={option === 'temperature'}>
-            <Slider value={temperature} onChange={onTemperatureChange} step={0.1} min={0} max={1} precision={3} />
-            <p>
-                <FormattedMessage defaultMessage="El parámetro de temperatura controla la aleatoriedad de las respuestas de la IA. Los valores más bajos harán que la IA sea más predecible, mientras que los valores más altos la harán más creativa." />
-            </p>
+            description:
+              "Etiqueta para el botón que abre un modal para configurar la 'temperatura' (aleatoriedad) de las respuestas de IA",
+          }, { temperature })}
+          focused={option === 'temperature'}
+        >
+          <Slider value={temperature} onChange={onTemperatureChange} step={0.1} min={0} max={1} precision={3} />
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem", marginBottom: "2.5rem" }}>
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontWeight: temperature === 0 ? "bold" : "normal" }}>Preciso</p>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontWeight: temperature === 0.5 ? "bold" : "normal" }}>Neutro</p>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontWeight: temperature === 1 ? "bold" : "normal" }}>Creativo</p>
+            </div>
+          </div>
+          <p>
+            <FormattedMessage defaultMessage="El parámetro de temperatura controla la aleatoriedad de las respuestas de la IA. Los valores más altos, como 0.8, aumentarán la creatividad de la IA, mientras que los valores más bajos, como 0.2, aumentarán su precisión y determinismo." />
+          </p>
         </SettingsOption>
-    ), [temperature, option, onTemperatureChange]);
+      ), [temperature, option, onTemperatureChange]);
 
     const elem = useMemo(() => (
         <SettingsTab name="options">

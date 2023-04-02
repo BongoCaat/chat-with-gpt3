@@ -41,9 +41,9 @@ export const secondaryMenu: MenuItem[] = [
         link: "https://ai.com",
         //icon: "external-link-alt",
     },
-    {
+    /*{
         label: "GitHub",
         link: "https://github.com/BongoCaat/chat-with-gpt3",
         icon: "github fab",
-    },
+    },*/
 ];
