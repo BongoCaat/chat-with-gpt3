@@ -10,21 +10,23 @@ import { useModals } from '@mantine/modals';
 import { backend } from '../../backend';
 
 const Container = styled.div`
-  margin: calc(1.618rem - 1rem);
-  margin-top: -0.218rem;
+  margin: calc(1.2rem - 0.8rem);
+  margin-top: 0rem;
+  margin-right: 0.43rem;
 `;
 
 const Empty = styled.p`
   text-align: center;
-  font-size: 0.8rem;
-  padding: 2rem;
+  font-size: 0.6rem;
+  padding: 1rem;
 `;
 
 const ChatList = styled.div`
-  max-height: 46rem;
+  max-height: 43rem;
   overflow-y: scroll;
   scrollbar-width: thin;
   scrollbar-color: #555555 #f5f5f5;
+  padding-right: 3.5rem;
 
   &::-webkit-scrollbar {
     width: 15px;
@@ -40,16 +42,22 @@ const ChatList = styled.div`
     border-radius: 10px;
     border: 3px solid #f5f5f5;
   }
+
+  @media (min-width: 768px) {
+    * {
+      touch-action: manipulation;
+    }
+  }
 `;
 
 const ChatListItemLink = styled(Link)`
   display: block;
   position: relative;
-  padding: 0.4rem 1rem;
-  margin: 0.218rem 0;
-  line-height: 1.7;
+  padding: 0.2rem 0.8rem;
+  margin: 0.1rem 0;
+  line-height: 1.5;
   text-decoration: none;
-  border-radius: 0.25rem;
+  border-radius: 0.65rem;
   pointer-events: auto;
 
   &:hover,
@@ -65,24 +73,39 @@ const ChatListItemLink = styled(Link)`
   strong {
     display: block;
     font-weight: 400;
-    font-size: 1rem;
-    line-height: 1.6;
-    padding-right: 1rem;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    padding-right: 0.8rem;
     color: white;
   }
 
   p {
-    font-size: 0.8rem;
+    font-size: 0.6rem;
     font-weight: 200;
     opacity: 0.8;
   }
 
   .mantine-ActionIcon-root {
+    z-index: 9999;
     position: absolute;
     right: 0.5rem;
     top: 50%;
     margin-top: -14px;
+    margin-right: -2.93rem;
     pointer-events: auto;
+    font-size: 34px;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  @media (min-width: 768px) {
+    * {
+      touch-action: manipulation;
+    }
   }
 `;
 
@@ -93,10 +116,18 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
   const navigate = useNavigate();
   const [editingTitle, setEditingTitle] = useState(false);
   const [newTitle, setNewTitle] = useState(c.title || '');
+  const [isSavingTitle, setIsSavingTitle] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const isEven = props.index % 2 === 0;
+
 
   useEffect(() => {
     setNewTitle(c.title || '');
   }, [c.title]);
+
+  useEffect(() => {
+    setEditingTitle(false);
+  }, [props.chat.chatID, context.currentChat.chat?.id]);
 
   useEffect(() => {
     if (!editingTitle && newTitle !== c.title) {
@@ -105,45 +136,45 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
   }, [c.title, editingTitle, newTitle]);
 
   const onDelete = useCallback(() => {
-    modals.openConfirmModal({
-      title: 'Estas seguro de que quieres borrar este chat?',
-      children: (
-        <p style={{ lineHeight: 1.7 }}>
-          {' '}
-          El chat "{c.title}" va a ser permanentemente borrado. Esto no se puede
-          deshacer.
-        </p>
-      ),
-      labels: {
-        confirm: 'Borrar permanentemente',
-        cancel: 'Cancelar',
-      },
-      confirmProps: {
-        color: 'red',
-      },
-      onConfirm: async () => {
-        try {
-          await backend.current?.deleteChat(c.chatID);
-          context.chat.deleteChat(c.chatID);
-          navigate('/');
-        } catch (e) {
-          console.error(e);
-          modals.openConfirmModal({
-            title: 'Algo salió mal',
-            children: (
-              <p style={{ lineHeight: 1.7 }}>
-                The chat "{c.title}" could not be deleted.
-              </p>
-            ),
-            labels: {
-              confirm: 'Intenta nuevamente',
-              cancel: 'Cancelar',
-            },
-            onConfirm: onDelete,
-          });
-        }
-      },
-    });
+    setTimeout(() => {
+      modals.openConfirmModal({
+        title: 'Estas seguro de que quieres borrar este chat?',
+        children: (
+          <p style={{ lineHeight: 1.7 }}>
+            El chat "{c.title}" va a ser permanentemente borrado. Esto no se puede deshacer.
+          </p>
+        ),
+        labels: {
+          confirm: 'Borrar permanentemente',
+          cancel: 'Cancelar',
+        },
+        confirmProps: {
+          color: 'red',
+        },
+        onConfirm: async () => {
+          try {
+            await backend.current?.deleteChat(c.chatID);
+            context.chat.deleteChat(c.chatID);
+            navigate('/');
+          } catch (e) {
+            console.error(e);
+            modals.openConfirmModal({
+              title: 'Algo salió mal',
+              children: (
+                <p style={{ lineHeight: 1.7 }}>
+                  El chat "{c.title}" no pudo ser borrado.
+                </p>
+              ),
+              labels: {
+                confirm: 'Intenta nuevamente',
+                cancel: 'Cancelar',
+              },
+              onConfirm: onDelete,
+            });
+          }
+        },
+      });
+    }, 57);
   }, [c.chatID, c.title, context.chat, modals, navigate]);
 
   const onEditTitle = useCallback(() => {
@@ -152,17 +183,18 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
 
   const onSaveTitle = useCallback(async () => {
     try {
+      setIsSavingTitle(true);
       await backend.current?.updateChatTitle(c.chatID, newTitle);
       context.chat.updateChatTitle(c.chatID, newTitle);
       setEditingTitle(false);
-      setNewTitle(newTitle); // Actualiza el estado "newTitle" con el nuevo título
+      setNewTitle(newTitle);
     } catch (e) {
       console.error(e);
       modals.openConfirmModal({
         title: 'Algo salió mal',
         children: (
           <p style={{ lineHeight: 1.7 }}>
-            The chat "{c.title}" title could not be updated.
+            El título del chat "{c.title}" no pudo ser actualizado.
           </p>
         ),
         labels: {
@@ -171,13 +203,39 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
         },
         onConfirm: onSaveTitle,
       });
+    } finally {
+      setIsSavingTitle(false);
     }
   }, [c.chatID, c.title, context.chat, modals, newTitle]);
 
   const onCancelEditTitle = useCallback(() => {
-    setNewTitle(c.title || '');
-    setEditingTitle(false);
+    setIsCancelling(true);
+    setTimeout(() => {
+      setIsCancelling(false);
+      setNewTitle(c.title || '');
+      setEditingTitle(false);
+    }, 1000);
   }, [c.title]);
+
+  const handleSaveClick = useCallback((callback) => {
+    if (!isSavingTitle) {
+      setIsSavingTitle(true);
+      setTimeout(() => {
+        setIsSavingTitle(false);
+        callback();
+      }, 1000);
+    }
+  }, [isSavingTitle]);
+
+  const handleCancelClick = useCallback((callback) => {
+    if (!isCancelling) {
+      setIsCancelling(true);
+      setTimeout(() => {
+        setIsCancelling(false);
+        callback();
+      }, 1000);
+    }
+  }, [isCancelling]);
 
   return (
     <ChatListItemLink
@@ -192,6 +250,8 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
             placeholder="Nuevo título"
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
+            onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); }}
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}
             style={{ width: '95%', fontSize: '80%', marginBottom: '0.7rem', marginTop: '0.5rem' }}
           />
         ) : (
@@ -206,19 +266,15 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
       {props.selected && (
         <Menu>
           <Menu.Target>
-            <ActionIcon color="green">
-              <i className="fa fa-bars" style={{ fontSize: '80%' }} />
+            <ActionIcon type="button" onClick={(e) => { e.stopPropagation(); e.preventDefault(); }} onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); }}>
+              <i className="fa fa-bars" style={{ fontSize: '82%' }} />
             </ActionIcon>
           </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item onClick={onEditTitle} icon={<i className="fa fa-edit" />}>
+          <Menu.Dropdown style={{ zIndex: 9999, position: 'fixed', top: 'auto', right: 'auto', left: 'auto', bottom: 'auto' }}>
+            <Menu.Item onClick={(e) => { e.stopPropagation(); e.preventDefault(); onEditTitle(); }} onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); onEditTitle(); }} color="green" icon={<i className="fa fa-edit" />}>
               <FormattedMessage defaultMessage={'Editar título'} />
             </Menu.Item>
-            <Menu.Item
-              onClick={onDelete}
-              color="red"
-              icon={<i className="fa fa-trash" />}
-            >
+            <Menu.Item onClick={(e) => { e.stopPropagation(); e.preventDefault(); onDelete(); }} onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); onDelete(); }} color="red" icon={<i className="fa fa-trash" />}>
               <FormattedMessage defaultMessage={'Borrar este chat'} />
             </Menu.Item>
           </Menu.Dropdown>
@@ -228,17 +284,19 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean; index
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="outline"
-            onClick={onCancelEditTitle}
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleCancelClick(onCancelEditTitle)}}
+            onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); handleCancelClick(onCancelEditTitle)}}
             style={{ marginRight: '1.0rem' }}
           >
-            Cancelar
+            {isCancelling ? 'Cancelando...' : 'Cancelar'}
           </Button>
           <Button
             variant="outline"
-            onClick={onSaveTitle}
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleSaveClick(onSaveTitle)}}
+            onTouchStart={(e) => { e.stopPropagation(); e.preventDefault(); handleSaveClick(onSaveTitle)}}
             style={{ marginRight: '2.0rem' }}
           >
-            Guardar
+            {isSavingTitle && !isCancelling ? 'Guardando...' : 'Guardar'}
           </Button>
         </div>
       )}
@@ -340,30 +398,30 @@ export default function RecentChats(props: any) {
   return (
     <Container>
       <Input
-        placeholder="Buscar entre los chats"
+        placeholder="Buscar chats"
         value={searchQuery}
         onChange={handleSearchChange}
         style={{ marginTop: '1rem', marginBottom: '1rem' }}
       />
       {searchQuery && (
-        <Button variant="filled" onClick={handleClearSearch} style={{ marginBottom: '0.7rem'}} >
+        <Button variant="filled" onClick={handleClearSearch} style={{ marginBottom: '0.85rem'}} >
           Borrar búsqueda
         </Button>
       )}
       {recentChats.length > 0 && (
         <ChatList onScroll={handleScroll}>
-          {recentChats.map((c, index) => (
-            <ChatListItem
-                key={c.chatID}
-                chat={c}
-                onClick={onClick}
-                selected={c.chatID === currentChatID}
-                index={index}
-                selectedIndex={selectedChatIndex}
-                onSelect={handleChatSelection}
-            />
-          ))}
-        </ChatList>
+        {recentChats.map((c, index) => (
+          <ChatListItem
+            key={c.chatID}
+            chat={c}
+            onClick={onClick}
+            selected={c.chatID === currentChatID}
+            index={index}
+            selectedIndex={selectedChatIndex}
+            onSelect={handleChatSelection}
+          />
+        ))}
+      </ChatList>
       )}
       {recentChats.length === 0 && (
         <Empty>

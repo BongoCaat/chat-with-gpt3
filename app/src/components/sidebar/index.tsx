@@ -17,7 +17,7 @@ const Container = styled.div`
     overflow: hidden;
     position: relative;
 
-    font-family: "Work Sans", sans-serif;
+    font-family: "Montserrat", sans-serif;
     box-shadow: 0px 0px 1rem 0.2rem rgb(0 0 0 / 5%);
 
     .sidebar-header {
