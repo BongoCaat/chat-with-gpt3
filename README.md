@@ -3,6 +3,7 @@
 This project is forked from [Chat with GPT](https://github.com/cogentapps/chat-with-gpt)
 
 Try out the hosted version at: https://bongpt.netlify.app
+                               https://bongpt.vercel.app
 
 ## Features
 
