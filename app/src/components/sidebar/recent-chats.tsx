@@ -113,6 +113,8 @@ const ChatListItemLink = styled(Link)`
   .cancel-save-buttons {
     display: flex;
     justify-content: space-between;
+    flex-shrink: 1;
+    flex-wrap: wrap;
   }
 
   @media (max-width: 768px) {
