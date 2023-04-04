@@ -28,17 +28,10 @@ export const secondaryMenu: MenuItem[] = [
         link: "https://discord.gg/mS5QvKykvv",
         icon: "discord fab",
     },*/
-<<<<<<< HEAD
     /*{
         label: "Prompts",
         link: "https://github.com/f/awesome-chatgpt-prompts",
     },*/
-=======
-    {
-        label: "Indicadores",
-        link: "https://prompts.chat/",
-    },
->>>>>>> a429b489a73d56a53e04785a69da53ffdd634630
     {
         label: "APIs",
         link: "https://controlc.com/49931130",
