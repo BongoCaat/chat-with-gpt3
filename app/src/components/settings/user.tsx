@@ -18,7 +18,7 @@ export default function UserOptionsTab(props: any) {
     const onUseOpenAIWhisperChange = useCallback((event: ChangeEvent<HTMLInputElement>) => dispatch(setUseOpenAIWhisperFromEvent(event)), [dispatch]);
 
     const copyOpenAIApiKey = useCallback(() => {
-        const apiKey = "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";
+        const apiKey = "(borrar)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";
         navigator.clipboard.writeText(apiKey);
         onOpenAIApiKeyChange(apiKey);
     }, [onOpenAIApiKeyChange]);
