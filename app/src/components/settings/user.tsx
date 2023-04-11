@@ -56,7 +56,7 @@ export default function UserOptionsTab(props: any) {
                     </Button>
                 </div>
                 <p style={{ marginTop: '0.55rem', marginBottom: '0.55rem' }}>
-                    <FormattedMessage defaultMessage="↑↑↑ | Al hacer clic en este botón, se copiará automáticamente la clave API de OpenAI y se pegará en el campo de entrada de arriba. | Borra uno de estos ' - ', solo uno. Es para evitar que sea detectado y que se borre automáticamente" />
+                    <FormattedMessage defaultMessage="↑↑↑ | Al hacer clic en este botón, se copiará automáticamente la clave API de OpenAI y se pegará en el campo de entrada de arriba. | Borra uno de estos ' - ', solo uno. Es para evitar que sea detectado y que se borre automáticamente." />
                 </p>
 
             </SettingsOption>
