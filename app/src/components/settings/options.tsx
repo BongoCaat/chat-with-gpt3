@@ -8,7 +8,7 @@ import { resetModel, setModel, selectModel, resetSystemPrompt, selectSystemPromp
 import { selectSettingsOption } from "../../store/settings-ui";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useMediaQuery } from 'react-responsive';
-import useIndicatorOptions from "./IndicatorOptions";
+import useIndicatorOptions from "../../store/IndicatorOptions";
 
 interface ConfirmationModalProps {
     isOpen: boolean;
@@ -244,7 +244,7 @@ export default function GenerationOptionsTab(props: any) {
 )}
             </div>
         </SettingsOption>
-    ), [intl, option, initialSystemPrompt, onSystemPromptChange, confirmationModalTitle, selectedIndicator, onIndicatorChange, handleUseIndicator, indicatorToDelete, showError, isMobile, openConfirmationModal, isConfirmationModalOpen, newIndicatorTitle, newIndicatorValue, resettableSystemPrompt, resetSystemPrompt, setSystemPrompt, onResetSystemPrompt, indicators, newIndicatorTitle, newIndicatorValue, addIndicator, removeIndicator, editIndicatorTitle, editIndicatorValue]);
+    ), [intl, option, initialSystemPrompt, indicatorOptions, onSystemPromptChange, confirmationModalTitle, selectedIndicator, onIndicatorChange, handleUseIndicator, indicatorToDelete, showError, isMobile, openConfirmationModal, isConfirmationModalOpen, newIndicatorTitle, newIndicatorValue, resettableSystemPrompt, resetSystemPrompt, setSystemPrompt, onResetSystemPrompt, indicators, newIndicatorTitle, newIndicatorValue, addIndicator, removeIndicator, editIndicatorTitle, editIndicatorValue]);
 
     const modelOption = useMemo(() => (
         <SettingsOption heading={intl.formatMessage({ defaultMessage: "Modelo", description: "Dirigirse a la configuración que permite a los usuarios elegir un modelo con el que interactuar, en la pantalla de configuración" })}

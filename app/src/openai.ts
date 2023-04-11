@@ -4,8 +4,8 @@ import SSE from "./sse";
 import { OpenAIMessage, Parameters } from "./types";
 
 export const defaultSystemPrompt = `
-You are ChatGPT, a large language model trained by OpenAI.
-Current date and time: {{ datetime }}
+Eres ChatGPT, un modelo de lenguaje grande entrenado por OpenAI.
+Fecha y hora actual: {{ datetime }}
 `.trim();
 
 export const defaultModel = 'gpt-3.5-turbo';

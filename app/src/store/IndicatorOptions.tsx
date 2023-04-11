@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
 export const defaultSystemPrompt = `
-You are ChatGPT, a large language model trained by OpenAI.
-Current date and time: {{ datetime }}
+Eres ChatGPT, un modelo de lenguaje grande entrenado por OpenAI.
+Fecha y hora actual: {{ datetime }}
 `.trim();
 
 function useIndicatorOptions() {

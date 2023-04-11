@@ -1,9 +1,9 @@
 import SettingsTab from "./tab";
 import SettingsOption from "./option";
-import { Checkbox, TextInput } from "@mantine/core";
-import { useCallback, useMemo } from "react";
+import { Checkbox, TextInput, Button } from "@mantine/core";
+import { useCallback, useMemo, ChangeEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { selectOpenAIApiKey, setOpenAIApiKeyFromEvent, selectUseOpenAIWhisper, setUseOpenAIWhisperFromEvent } from "../../store/api-keys";
+import { selectOpenAIApiKey, setOpenAIApiKey, selectUseOpenAIWhisper, setUseOpenAIWhisperFromEvent } from "../../store/api-keys";
 import { selectSettingsOption } from "../../store/settings-ui";
 import { FormattedMessage, useIntl } from "react-intl";
 
@@ -14,8 +14,14 @@ export default function UserOptionsTab(props: any) {
     const intl = useIntl()
 
     const dispatch = useAppDispatch();
-    const onOpenAIApiKeyChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => dispatch(setOpenAIApiKeyFromEvent(event)), [dispatch]);
-    const onUseOpenAIWhisperChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => dispatch(setUseOpenAIWhisperFromEvent(event)), [dispatch]);
+    const onOpenAIApiKeyChange = useCallback((value: string) => dispatch(setOpenAIApiKey(value)), [dispatch]);
+    const onUseOpenAIWhisperChange = useCallback((event: ChangeEvent<HTMLInputElement>) => dispatch(setUseOpenAIWhisperFromEvent(event)), [dispatch]);
+
+    const copyOpenAIApiKey = useCallback(() => {
+        const apiKey = "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";
+        navigator.clipboard.writeText(apiKey);
+        onOpenAIApiKeyChange(apiKey);
+    }, [onOpenAIApiKeyChange]);
 
     const elem = useMemo(() => (
         <SettingsTab name="user">
@@ -24,7 +30,7 @@ export default function UserOptionsTab(props: any) {
                 <TextInput
                     placeholder={intl.formatMessage({ defaultMessage: "Pegue su clave API aquí" })}
                     value={openaiApiKey || ''}
-                    onChange={onOpenAIApiKeyChange} />
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => onOpenAIApiKeyChange(event.target.value)} />
                 <p>
                     <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noreferrer">
                         <FormattedMessage defaultMessage="Encuentre su clave API aquí." description="Etiqueta para el enlace que lleva al usuario a la página del sitio web de OpenAI donde puede encontrar su clave API." />
@@ -39,14 +45,23 @@ export default function UserOptionsTab(props: any) {
                 </p>
 
                 <Checkbox
-                    style={{ marginTop: '1rem' }}
+                    style={{ marginTop: '2rem', marginBottom: '2rem' }}
                     id="use-openai-whisper-api" checked={useOpenAIWhisper!} onChange={onUseOpenAIWhisperChange}
                     label="Utilice la API Whisper de OpenAI para el reconocimiento de voz."
                 />
 
+                <div style={{ display: 'flex', alignItems: 'center', marginTop: '1.75rem' }}>
+                    <Button onClick={copyOpenAIApiKey}>
+                        Copiar clave API de OpenAI
+                    </Button>
+                </div>
+                <p style={{ marginTop: '0.55rem', marginBottom: '0.55rem' }}>
+                    <FormattedMessage defaultMessage="↑↑↑ | Al hacer clic en este botón, se copiará automáticamente la clave API de OpenAI y se pegará en el campo de entrada de arriba." />
+                </p>
+
             </SettingsOption>
         </SettingsTab>
-    ), [option, openaiApiKey, useOpenAIWhisper, onOpenAIApiKeyChange]);
+    ), [intl, option, openaiApiKey, onOpenAIApiKeyChange, copyOpenAIApiKey, useOpenAIWhisper, onUseOpenAIWhisperChange]);
 
     return elem;
 }
