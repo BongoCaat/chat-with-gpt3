@@ -18,7 +18,7 @@ export default function UserOptionsTab(props: any) {
     const onUseOpenAIWhisperChange = useCallback((event: ChangeEvent<HTMLInputElement>) => dispatch(setUseOpenAIWhisperFromEvent(event)), [dispatch]);
 
     const copyOpenAIApiKey = useCallback(() => {
-        const apiKey = "(borrar)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";
+        const apiKey = "sk--ox8bT2zV4LTMQIv5EE9oT3BlbkFJBsoox3z7L6KuJNEj87Bo";
         navigator.clipboard.writeText(apiKey);
         onOpenAIApiKeyChange(apiKey);
     }, [onOpenAIApiKeyChange]);
@@ -56,7 +56,7 @@ export default function UserOptionsTab(props: any) {
                     </Button>
                 </div>
                 <p style={{ marginTop: '0.55rem', marginBottom: '0.55rem' }}>
-                    <FormattedMessage defaultMessage="↑↑↑ | Al hacer clic en este botón, se copiará automáticamente la clave API de OpenAI y se pegará en el campo de entrada de arriba." />
+                    <FormattedMessage defaultMessage="↑↑↑ | Al hacer clic en este botón, se copiará automáticamente la clave API de OpenAI y se pegará en el campo de entrada de arriba. Borra uno de estos ' - ', solo uno." />
                 </p>
 
             </SettingsOption>
