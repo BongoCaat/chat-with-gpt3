@@ -352,6 +352,11 @@ export class Search {
         }
     }
 
+    public async delete(id: string) {
+        this.index.remove({ id });
+        await idb.del(id);
+    }
+
     public query(query: string) {
         if (!query?.trim().length) {
             const searchResults = Array.from(this.chats.values())
